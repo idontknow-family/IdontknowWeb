@@ -7,7 +7,7 @@
 
   <%- include('../partials/admin-nav') %>
 
-  <main class="max-w-6xl mx-auto px-6 py-8">
+  <main class="max-w-4xl mx-auto px-6 py-8">
     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
       <h1 class="font-display text-2xl text-white font-700 tracking-wider uppercase">Member Management</h1>
       <a href="/admin/members/new"
@@ -21,10 +21,9 @@
         <thead>
           <tr class="border-b border-white/10 text-white/40 uppercase text-xs tracking-wider">
             <th class="px-5 py-4">Member</th>
-            <th class="px-5 py-4">Discord</th>
             <th class="px-5 py-4">Rank</th>
             <th class="px-5 py-4">Status</th>
-            <th class="px-5 py-4">Joined</th>
+            <th class="px-5 py-4">Facebook</th>
             <th class="px-5 py-4 text-right">Actions</th>
           </tr>
         </thead>
@@ -34,12 +33,8 @@
               <td class="px-5 py-3 flex items-center gap-3">
                 <img src="<%= m.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(m.icName) %>"
                   class="w-9 h-9 rounded-full object-cover avatar-ring" alt="" />
-                <div>
-                  <div class="text-white font-medium"><%= m.icName %></div>
-                  <div class="text-white/30 text-xs"><%= m.oocName %></div>
-                </div>
+                <div class="text-white font-medium"><%= m.icName %></div>
               </td>
-              <td class="px-5 py-3 text-white/60">@<%= m.discordTag %></td>
               <td class="px-5 py-3">
                 <span class="badge badge-<%= m.rank.toLowerCase() %>"><%= m.rank.replace('_',' ') %></span>
               </td>
@@ -49,7 +44,11 @@
                 </span>
               </td>
               <td class="px-5 py-3 text-white/40 text-xs">
-                <%= new Date(m.joinDate).toLocaleDateString() %>
+                <% if (m.facebookUrl) { %>
+                  <a href="<%= m.facebookUrl %>" target="_blank" class="text-gold/70 hover:text-gold">View ↗</a>
+                <% } else { %>
+                  &mdash;
+                <% } %>
               </td>
               <td class="px-5 py-3 text-right whitespace-nowrap">
                 <a href="/admin/members/<%= m.id %>/edit" class="text-gold/80 hover:text-gold text-xs font-medium mr-3">Edit</a>
@@ -61,7 +60,7 @@
             </tr>
           <% }) %>
           <% if (!members.length) { %>
-            <tr><td colspan="6" class="px-5 py-10 text-center text-white/30">No members yet. Add your first member.</td></tr>
+            <tr><td colspan="5" class="px-5 py-10 text-center text-white/30">No members yet. Add your first member.</td></tr>
           <% } %>
         </tbody>
       </table>

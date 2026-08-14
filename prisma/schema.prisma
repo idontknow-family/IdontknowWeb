@@ -23,16 +23,10 @@ enum MemberStatus {
 model Member {
   id           Int          @id @default(autoincrement())
   icName       String       @map("ic_name")
-  oocName      String       @map("ooc_name")
-  discordTag   String       @map("discord_tag")
   avatarUrl    String?      @map("avatar_url")
+  facebookUrl  String?      @map("facebook_url")
   rank         Rank         @default(RECRUIT)
   status       MemberStatus @default(ACTIVE)
-  phoneNumber  String?      @map("phone_number")
-  specialty    String?
-  primaryGear  String?      @map("primary_gear")
-  joinDate     DateTime     @default(now()) @map("join_date")
-  notes        String?
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
 

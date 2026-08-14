@@ -7,7 +7,7 @@
 
   <%- include('../partials/admin-nav') %>
 
-  <main class="max-w-2xl mx-auto px-6 py-8">
+  <main class="max-w-lg mx-auto px-6 py-8">
     <a href="/admin" class="text-white/30 text-xs hover:text-white/60">&larr; Back to dashboard</a>
     <h1 class="font-display text-2xl text-white font-700 tracking-wider uppercase mt-2 mb-6">
       <%= member ? 'Edit Member' : 'Add New Member' %>
@@ -23,30 +23,16 @@
       enctype="multipart/form-data"
       class="glass-card rounded-2xl p-8 space-y-5"
     >
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="text-xs text-white/40 uppercase tracking-wider">IC Name (In-Game)</label>
-          <input type="text" name="icName" required value="<%= member ? member.icName : '' %>"
-            class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
-        </div>
-        <div>
-          <label class="text-xs text-white/40 uppercase tracking-wider">OOC Name (Real/Discord Name)</label>
-          <input type="text" name="oocName" required value="<%= member ? member.oocName : '' %>"
-            class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
-        </div>
+      <div>
+        <label class="text-xs text-white/40 uppercase tracking-wider">IC Name (In-Game)</label>
+        <input type="text" name="icName" required value="<%= member ? member.icName : '' %>"
+          class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="text-xs text-white/40 uppercase tracking-wider">Discord Tag</label>
-          <input type="text" name="discordTag" required placeholder="username#0001" value="<%= member ? member.discordTag : '' %>"
-            class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
-        </div>
-        <div>
-          <label class="text-xs text-white/40 uppercase tracking-wider">Phone Number</label>
-          <input type="text" name="phoneNumber" value="<%= member && member.phoneNumber ? member.phoneNumber : '' %>"
-            class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
-        </div>
+      <div>
+        <label class="text-xs text-white/40 uppercase tracking-wider">Facebook Link</label>
+        <input type="url" name="facebookUrl" placeholder="https://facebook.com/..." value="<%= member && member.facebookUrl ? member.facebookUrl : '' %>"
+          class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
       </div>
 
       <div class="grid grid-cols-2 gap-4">
@@ -69,25 +55,6 @@
       </div>
 
       <div>
-        <label class="text-xs text-white/40 uppercase tracking-wider">Join Date</label>
-        <input type="date" name="joinDate"
-          value="<%= member ? new Date(member.joinDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>"
-          class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
-      </div>
-
-      <div>
-        <label class="text-xs text-white/40 uppercase tracking-wider">Primary Role / Specialty</label>
-        <input type="text" name="specialty" placeholder="e.g. Security & Enforcement" value="<%= member && member.specialty ? member.specialty : '' %>"
-          class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
-      </div>
-
-      <div>
-        <label class="text-xs text-white/40 uppercase tracking-wider">Primary Weapons / Vehicles</label>
-        <input type="text" name="primaryGear" placeholder="e.g. Carbine Rifle, Kuruma" value="<%= member && member.primaryGear ? member.primaryGear : '' %>"
-          class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
-      </div>
-
-      <div>
         <label class="text-xs text-white/40 uppercase tracking-wider">Avatar Image URL (optional)</label>
         <input type="url" name="avatarUrl" placeholder="https://..." value="<%= member && member.avatarUrl && !member.avatarUrl.startsWith('/uploads') ? member.avatarUrl : '' %>"
           class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
@@ -100,12 +67,6 @@
         <% if (member && member.avatarUrl) { %>
           <img src="<%= member.avatarUrl %>" class="w-14 h-14 rounded-full mt-3 avatar-ring object-cover" alt="current avatar" />
         <% } %>
-      </div>
-
-      <div>
-        <label class="text-xs text-white/40 uppercase tracking-wider">Notes</label>
-        <textarea name="notes" rows="3"
-          class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white"><%= member && member.notes ? member.notes : '' %></textarea>
       </div>
 
       <div class="flex gap-3 pt-2">

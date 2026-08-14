@@ -44,19 +44,7 @@ router.get('/members/new', (req, res) => {
 // CREATE
 router.post('/members', upload.single('avatarFile'), async (req, res, next) => {
   try {
-    const {
-      icName,
-      oocName,
-      discordTag,
-      rank,
-      status,
-      phoneNumber,
-      specialty,
-      primaryGear,
-      joinDate,
-      notes,
-      avatarUrl,
-    } = req.body;
+    const { icName, rank, status, avatarUrl, facebookUrl } = req.body;
 
     const finalAvatarUrl = req.file
       ? `/uploads/${req.file.filename}`
@@ -65,16 +53,10 @@ router.post('/members', upload.single('avatarFile'), async (req, res, next) => {
     await prisma.member.create({
       data: {
         icName,
-        oocName,
-        discordTag,
         rank: RANKS.includes(rank) ? rank : 'RECRUIT',
         status: STATUSES.includes(status) ? status : 'ACTIVE',
-        phoneNumber: phoneNumber || null,
-        specialty: specialty || null,
-        primaryGear: primaryGear || null,
-        joinDate: joinDate ? new Date(joinDate) : new Date(),
-        notes: notes || null,
         avatarUrl: finalAvatarUrl,
+        facebookUrl: facebookUrl || null,
       },
     });
 
@@ -110,31 +92,13 @@ router.get('/members/:id/edit', async (req, res, next) => {
 router.post('/members/:id', upload.single('avatarFile'), async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    const {
-      icName,
-      oocName,
-      discordTag,
-      rank,
-      status,
-      phoneNumber,
-      specialty,
-      primaryGear,
-      joinDate,
-      notes,
-      avatarUrl,
-    } = req.body;
+    const { icName, rank, status, avatarUrl, facebookUrl } = req.body;
 
     const data = {
       icName,
-      oocName,
-      discordTag,
       rank: RANKS.includes(rank) ? rank : 'RECRUIT',
       status: STATUSES.includes(status) ? status : 'ACTIVE',
-      phoneNumber: phoneNumber || null,
-      specialty: specialty || null,
-      primaryGear: primaryGear || null,
-      joinDate: joinDate ? new Date(joinDate) : undefined,
-      notes: notes || null,
+      facebookUrl: facebookUrl || null,
     };
 
     if (req.file) {
