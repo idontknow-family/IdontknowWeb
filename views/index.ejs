@@ -5,49 +5,116 @@
 </head>
 <body class="antialiased">
 
-  <!-- Hero -->
-  <header class="relative overflow-hidden border-b border-white/5">
-    <div class="max-w-6xl mx-auto px-6 pt-16 pb-10 text-center">
-      <p class="font-display text-gold text-sm tracking-[0.35em] mb-3">MEMBER ROSTER</p>
-      <h1 class="font-display glow-text text-4xl md:text-6xl font-700 text-white tracking-widest uppercase">
+  <section class="hero-wrap">
+    <div class="hero-bg"></div>
+    <div id="snowContainer"></div>
+
+    <div class="hero-title">
+      <h1 class="font-display glow-text text-5xl md:text-7xl font-700 text-white tracking-widest uppercase">
         <%= familyName %>
       </h1>
-      <p class="text-white/50 mt-3 tracking-wide"><%= familySlogan %></p>
+      <p class="text-white/40 mt-3 tracking-[0.3em] text-xs md:text-sm uppercase"><%= familySlogan %></p>
     </div>
-  </header>
 
-  <!-- Member Grid -->
-  <main class="max-w-6xl mx-auto px-6 py-12">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="logo-panel">
+      <% if (familyLogoUrl) { %>
+        <img src="<%= familyLogoUrl %>" alt="<%= familyName %> logo" class="logo-float" />
+      <% } else { %>
+        <span class="font-display text-white/15 text-6xl tracking-widest select-none">LOGO</span>
+      <% } %>
+    </div>
+
+    <!-- Member pills -->
+    <div class="relative z-10 flex flex-wrap justify-center gap-4 mt-10 max-w-4xl">
       <% members.forEach(m => { %>
-        <div class="glass-card rounded-2xl p-6 text-center">
-          <img
-            src="<%= m.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(m.icName) %>"
-            alt="<%= m.icName %>"
-            class="avatar-ring w-20 h-20 rounded-full object-cover mx-auto mb-4"
-          />
-          <h3 class="font-display text-lg text-white font-600"><%= m.icName %></h3>
-          <div class="flex items-center justify-center gap-2 mt-3">
-            <span class="badge badge-<%= m.rank.toLowerCase() %>"><%= rankLabels[m.rank] %></span>
-          </div>
+        <div class="member-pill <%= m.rank === 'LEADER' ? 'is-leader' : '' %>">
+          <div class="font-display text-white font-700 tracking-wide uppercase text-sm"><%= m.icName %></div>
+          <div class="text-white/40 text-[11px] uppercase tracking-widest mt-1"><%= rankLabels[m.rank] %></div>
           <% if (m.facebookUrl) { %>
             <a href="<%= m.facebookUrl %>" target="_blank" rel="noopener noreferrer"
-              class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 mt-4 transition">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-white/70">
+              class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/5 hover:bg-white/10 mt-2 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3 text-white/60">
                 <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
               </svg>
             </a>
           <% } %>
         </div>
       <% }) %>
+      <% if (!members.length) { %>
+        <p class="text-white/30 font-display tracking-widest">NO MEMBERS YET</p>
+      <% } %>
     </div>
-    <% if (!members.length) { %>
-      <p class="text-center text-white/30 py-16 font-display tracking-widest">NO MEMBERS YET</p>
-    <% } %>
-  </main>
 
-  <footer class="text-center text-white/20 text-xs py-8 border-t border-white/5">
-    &copy; <%= new Date().getFullYear() %> <%= familyName %>
-  </footer>
+    <!-- Supervised by -->
+    <% if (supervisors.length) { %>
+      <div class="relative z-10 text-center mt-12">
+        <p class="font-display text-white/50 text-xs tracking-[0.3em] uppercase mb-4">Supervised By</p>
+        <div class="flex flex-wrap justify-center gap-2 max-w-2xl">
+          <% supervisors.forEach(s => { %>
+            <span class="supervised-pill"><%= s %></span>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <p class="relative z-10 text-white/20 text-[11px] mt-14 text-center">
+      &copy; <%= new Date().getFullYear() %> <%= familyName.split(' ')[0] %>
+      <% if (designCredit) { %> &middot; Designed by <%= designCredit %><% } %>
+      <% if (musicCredit) { %> &middot; Music credits by <%= musicCredit %><% } %>
+    </p>
+  </section>
+
+  <% if (backgroundMusicUrl) { %>
+    <audio id="bgMusic" src="<%= backgroundMusicUrl %>" loop></audio>
+    <button id="musicToggle" class="music-toggle" aria-label="Toggle music">
+      <svg id="iconPause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-white/70">
+        <rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>
+      </svg>
+      <svg id="iconPlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-white/70 hidden">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+  <% } %>
+
+  <script>
+    // Falling snow effect
+    (function () {
+      const container = document.getElementById('snowContainer');
+      const count = window.innerWidth < 640 ? 18 : 32;
+      for (let i = 0; i < count; i++) {
+        const flake = document.createElement('span');
+        flake.className = 'snow';
+        flake.textContent = '❋';
+        flake.style.left = Math.random() * 100 + 'vw';
+        flake.style.fontSize = (8 + Math.random() * 10) + 'px';
+        flake.style.animationDuration = (8 + Math.random() * 10) + 's';
+        flake.style.animationDelay = (Math.random() * 8) + 's';
+        container.appendChild(flake);
+      }
+    })();
+
+    // Background music toggle
+    (function () {
+      const audio = document.getElementById('bgMusic');
+      const btn = document.getElementById('musicToggle');
+      if (!audio || !btn) return;
+      const iconPlay = document.getElementById('iconPlay');
+      const iconPause = document.getElementById('iconPause');
+      let playing = false;
+
+      btn.addEventListener('click', () => {
+        if (playing) {
+          audio.pause();
+          iconPlay.classList.remove('hidden');
+          iconPause.classList.add('hidden');
+        } else {
+          audio.play().catch(() => {});
+          iconPlay.classList.add('hidden');
+          iconPause.classList.remove('hidden');
+        }
+        playing = !playing;
+      });
+    })();
+  </script>
 </body>
 </html>
