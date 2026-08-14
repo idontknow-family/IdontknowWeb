@@ -1,0 +1,15 @@
+<nav class="border-b border-white/5 bg-panel/40">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="/admin" class="font-display text-white font-700 tracking-widest uppercase text-sm">
+      <%= familyName %> <span class="text-gold">/ ADMIN</span>
+    </a>
+    <div class="flex items-center gap-4 text-xs">
+      <a href="/" target="_blank" class="text-white/40 hover:text-white/70">View Roster ↗</a>
+      <span class="text-white/20">|</span>
+      <span class="text-white/40">Logged in as <span class="text-white/70"><%= adminUsername %></span></span>
+      <form method="POST" action="/admin/logout" class="inline">
+        <button type="submit" class="text-red-400/70 hover:text-red-400">Logout</button>
+      </form>
+    </div>
+  </div>
+</nav>

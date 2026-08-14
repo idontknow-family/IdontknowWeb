@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body class="antialiased">
+
+  <%- include('../partials/admin-nav') %>
+
+  <main class="max-w-6xl mx-auto px-6 py-8">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <h1 class="font-display text-2xl text-white font-700 tracking-wider uppercase">Member Management</h1>
+      <a href="/admin/members/new"
+        class="bg-gold/90 hover:bg-gold text-black font-display font-700 tracking-wider uppercase text-xs rounded-lg px-5 py-2.5 transition">
+        + Add Member
+      </a>
+    </div>
+
+    <div class="glass-card rounded-2xl overflow-x-auto">
+      <table class="w-full text-sm text-left">
+        <thead>
+          <tr class="border-b border-white/10 text-white/40 uppercase text-xs tracking-wider">
+            <th class="px-5 py-4">Member</th>
+            <th class="px-5 py-4">Discord</th>
+            <th class="px-5 py-4">Rank</th>
+            <th class="px-5 py-4">Status</th>
+            <th class="px-5 py-4">Joined</th>
+            <th class="px-5 py-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% members.forEach(m => { %>
+            <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
+              <td class="px-5 py-3 flex items-center gap-3">
+                <img src="<%= m.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(m.icName) %>"
+                  class="w-9 h-9 rounded-full object-cover avatar-ring" alt="" />
+                <div>
+                  <div class="text-white font-medium"><%= m.icName %></div>
+                  <div class="text-white/30 text-xs"><%= m.oocName %></div>
+                </div>
+              </td>
+              <td class="px-5 py-3 text-white/60">@<%= m.discordTag %></td>
+              <td class="px-5 py-3">
+                <span class="badge badge-<%= m.rank.toLowerCase() %>"><%= m.rank.replace('_',' ') %></span>
+              </td>
+              <td class="px-5 py-3">
+                <span class="text-xs flex items-center gap-1.5 text-white/60">
+                  <span class="status-dot status-<%= m.status.toLowerCase() %>"></span><%= m.status %>
+                </span>
+              </td>
+              <td class="px-5 py-3 text-white/40 text-xs">
+                <%= new Date(m.joinDate).toLocaleDateString() %>
+              </td>
+              <td class="px-5 py-3 text-right whitespace-nowrap">
+                <a href="/admin/members/<%= m.id %>/edit" class="text-gold/80 hover:text-gold text-xs font-medium mr-3">Edit</a>
+                <form method="POST" action="/admin/members/<%= m.id %>/delete" class="inline"
+                  onsubmit="return confirm('Remove <%= m.icName %> from the roster? This cannot be undone.');">
+                  <button type="submit" class="text-red-400/80 hover:text-red-400 text-xs font-medium">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          <% if (!members.length) { %>
+            <tr><td colspan="6" class="px-5 py-10 text-center text-white/30">No members yet. Add your first member.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

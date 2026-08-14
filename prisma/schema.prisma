@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rank {
+  LEADER
+  CO_LEADER
+  HIGH_COMMAND
+  OFFICIAL_MEMBER
+  RECRUIT
+}
+
+enum MemberStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Member {
+  id           Int          @id @default(autoincrement())
+  icName       String       @map("ic_name")
+  oocName      String       @map("ooc_name")
+  discordTag   String       @map("discord_tag")
+  avatarUrl    String?      @map("avatar_url")
+  rank         Rank         @default(RECRUIT)
+  status       MemberStatus @default(ACTIVE)
+  phoneNumber  String?      @map("phone_number")
+  specialty    String?
+  primaryGear  String?      @map("primary_gear")
+  joinDate     DateTime     @default(now()) @map("join_date")
+  notes        String?
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  @@map("members")
+}
+
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("admin_users")
+}

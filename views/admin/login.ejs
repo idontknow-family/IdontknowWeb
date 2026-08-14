@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body class="antialiased flex items-center justify-center min-h-screen px-4">
+  <div class="glass-card rounded-2xl w-full max-w-sm p-8">
+    <p class="font-display text-gold text-xs tracking-[0.35em] text-center mb-2">ADMIN ACCESS</p>
+    <h1 class="font-display text-2xl text-white text-center font-700 tracking-widest uppercase mb-6"><%= familyName %></h1>
+
+    <% if (error) { %>
+      <div class="bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-lg px-4 py-2 mb-4">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/admin/login" class="space-y-4">
+      <div>
+        <label class="text-xs text-white/40 uppercase tracking-wider">Username</label>
+        <input type="text" name="username" required autocomplete="username"
+          class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
+      </div>
+      <div>
+        <label class="text-xs text-white/40 uppercase tracking-wider">Password</label>
+        <input type="password" name="password" required autocomplete="current-password"
+          class="search-input w-full rounded-lg px-4 py-2.5 mt-1 text-sm text-white" />
+      </div>
+      <button type="submit"
+        class="w-full bg-gold/90 hover:bg-gold text-black font-display font-700 tracking-widest uppercase text-sm rounded-lg py-2.5 mt-2 transition">
+        Sign In
+      </button>
+    </form>
+
+    <a href="/" class="block text-center text-white/30 text-xs mt-6 hover:text-white/60">&larr; Back to roster</a>
+  </div>
+</body>
+</html>
