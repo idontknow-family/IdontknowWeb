@@ -42,4 +42,3 @@ router.get('/roster', async (req, res, next) => {
 });
 
 module.exports = router;
-EOF
