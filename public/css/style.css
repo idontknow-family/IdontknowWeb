@@ -137,7 +137,7 @@ body {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 640px;
+  max-width: 760px;
   aspect-ratio: 16 / 9;
   border-radius: 1rem;
   border: 1px solid rgba(255,255,255,0.08);
@@ -150,17 +150,25 @@ body {
   overflow: hidden;
 }
 
-.logo-float {
-  max-width: 55%;
-  max-height: 65%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 30px rgba(212,175,106,0.25));
-  animation: floatY 5s ease-in-out infinite;
+.logo-panel {
+  perspective: 1000px;
 }
 
-@keyframes floatY {
-  0%, 100% { transform: translateY(0px); }
-  50%      { transform: translateY(-14px); }
+.logo-float {
+  max-width: 78%;
+  max-height: 88%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 40px rgba(212,175,106,0.3));
+  animation: floatSpin3D 7s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+@keyframes floatSpin3D {
+  0%   { transform: translateY(0px) rotateY(0deg) rotateX(0deg); }
+  25%  { transform: translateY(-10px) rotateY(90deg) rotateX(4deg); }
+  50%  { transform: translateY(0px) rotateY(180deg) rotateX(0deg); }
+  75%  { transform: translateY(-10px) rotateY(270deg) rotateX(-4deg); }
+  100% { transform: translateY(0px) rotateY(360deg) rotateX(0deg); }
 }
 
 .member-pill {
