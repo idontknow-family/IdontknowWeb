@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const prisma = require('../config/db');
 const { requireAuth } = require('../middleware/auth');
-const upload = require('../middleware/upload');
+const uploadSingleAvatar = require('../middleware/upload');
 
 router.use(requireAuth);
 
@@ -42,8 +42,20 @@ router.get('/members/new', (req, res) => {
 });
 
 // CREATE
-router.post('/members', upload.single('avatarFile'), async (req, res, next) => {
+router.post('/members', uploadSingleAvatar, async (req, res, next) => {
   try {
+    if (req.uploadError) {
+      return res.render('admin/member-form', {
+        title: 'Add New Member',
+        familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
+        adminUsername: req.session.adminUsername,
+        member: req.body,
+        RANKS,
+        STATUSES,
+        error: req.uploadError,
+      });
+    }
+
     const { icName, rank, status, avatarUrl, facebookUrl } = req.body;
 
     const finalAvatarUrl = req.file
@@ -89,9 +101,23 @@ router.get('/members/:id/edit', async (req, res, next) => {
 });
 
 // UPDATE
-router.post('/members/:id', upload.single('avatarFile'), async (req, res, next) => {
+router.post('/members/:id', uploadSingleAvatar, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
+
+    if (req.uploadError) {
+      const existing = await prisma.member.findUnique({ where: { id } });
+      return res.render('admin/member-form', {
+        title: 'Edit Member',
+        familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
+        adminUsername: req.session.adminUsername,
+        member: existing,
+        RANKS,
+        STATUSES,
+        error: req.uploadError,
+      });
+    }
+
     const { icName, rank, status, avatarUrl, facebookUrl } = req.body;
 
     const data = {

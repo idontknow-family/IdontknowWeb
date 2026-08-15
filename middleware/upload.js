@@ -22,13 +22,33 @@ function fileFilter(req, file, cb) {
   if (allowed.includes(ext)) {
     return cb(null, true);
   }
-  cb(new Error('Only image files (png, jpg, jpeg, webp, gif) are allowed.'));
+  cb(new Error('INVALID_FILE_TYPE'));
 }
+
+const MAX_FILE_SIZE_MB = 5;
 
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: MAX_FILE_SIZE_MB * 1024 * 1024 },
 });
 
-module.exports = upload;
+// Wraps upload.single() so Multer errors (file too large, bad type, etc.)
+// become a friendly req.uploadError string instead of crashing the request.
+// The route handler checks req.uploadError and re-renders the form.
+function uploadSingleAvatar(req, res, next) {
+  upload.single('avatarFile')(req, res, (err) => {
+    if (err) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        req.uploadError = `Avatar file is too large. Max size is ${MAX_FILE_SIZE_MB}MB.`;
+      } else if (err.message === 'INVALID_FILE_TYPE') {
+        req.uploadError = 'Only image files (png, jpg, jpeg, webp, gif) are allowed.';
+      } else {
+        req.uploadError = 'File upload failed. Please try again.';
+      }
+    }
+    next();
+  });
+}
+
+module.exports = uploadSingleAvatar;
