@@ -10,26 +10,29 @@ const RANK_LABELS = {
   RECRUIT: 'Recruit',
 };
 
-router.get('/', async (req, res, next) => {
+// Home / Landing page — hero + spinning logo only
+router.get('/', (req, res) => {
+  res.render('index', {
+    title: `${process.env.FAMILY_NAME || 'FAMILY'} | Home`,
+    familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
+    familySlogan: process.env.FAMILY_SLOGAN || 'Loyalty. Power. Legacy.',
+    familyLogoUrl: process.env.FAMILY_LOGO_URL || '',
+    backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
+    designCredit: process.env.DESIGN_CREDIT || '',
+    musicCredit: process.env.MUSIC_CREDIT || '',
+  });
+});
+
+// Dedicated Member Roster page
+router.get('/roster', async (req, res, next) => {
   try {
     const members = await prisma.member.findMany({
       orderBy: [{ rank: 'asc' }, { icName: 'asc' }],
     });
 
-    const supervisors = (process.env.SUPERVISORS || '')
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    res.render('index', {
-      title: `${process.env.FAMILY_NAME || 'FAMILY'} | Roster`,
+    res.render('roster', {
+      title: `Member - ${process.env.FAMILY_NAME || 'FAMILY'}`,
       familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
-      familySlogan: process.env.FAMILY_SLOGAN || 'Loyalty. Power. Legacy.',
-      familyLogoUrl: process.env.FAMILY_LOGO_URL || '',
-      backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
-      designCredit: process.env.DESIGN_CREDIT || '',
-      musicCredit: process.env.MUSIC_CREDIT || '',
-      supervisors,
       members,
       rankLabels: RANK_LABELS,
     });
@@ -39,3 +42,4 @@ router.get('/', async (req, res, next) => {
 });
 
 module.exports = router;
+EOF
