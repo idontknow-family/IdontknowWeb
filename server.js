@@ -12,6 +12,11 @@ const adminRoutes = require('./routes/admin');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// --- Trust Railway's reverse proxy so req.secure / X-Forwarded-Proto
+//     are read correctly. MUST be set before the session middleware,
+//     or secure cookies will never round-trip back from the browser. ---
+app.set('trust proxy', 1);
+
 // --- View engine ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -40,6 +45,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 8, // 8 hours
     },
   })
