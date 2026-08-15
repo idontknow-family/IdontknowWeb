@@ -52,34 +52,26 @@
     </button>
   <% } %>
 
-  <script>
-    // Falling snow effect
-    (function () {
-      const container = document.getElementById(' snowContainer'); if (!container) return; const
-        count = window.innerWidth < 640 ? 18 : 32; for (let i = 0; i < count; i++) {
-          const
-          flake = document.createElement('span'); flake.className = 'snow'; flake.textContent = '❋';
-          flake.style.left = Math.random() * 100 + 'vw'; flake.style.fontSize = (8 + Math.random() * 10) + 'px';
-          flake.style.animationDuration = (8 + Math.random() * 10) + 's'; flake.style.animationDelay = (Math.random() * 8)
-            + 's'; container.appendChild(flake);
-        }
-    })(); // Background music toggle (function () { const
-    audio = document.getElementById('bgMusic'); const btn = document.getElementById('musicToggle'); if (!audio ||
-      !btn) return; const iconPlay = document.getElementById('iconPlay'); const
-        iconPause = document.getElementById('iconPause'); let playing = false; btn.addEventListener('click', () => {
-          if (playing) {
-            audio.pause();
-            iconPlay.classList.remove('hidden');
-            iconPause.classList.add('hidden');
-          } else {
-            audio.play().catch(() => { });
-            iconPlay.classList.add('hidden');
-            iconPause.classList.remove('hidden');
-          }
-          playing = !playing;
-        });
-          }) ();
-  </script>
+<script>
+  (function () {
+    var container = document.getElementById(' snowContainer'); if (!container) { return; } var count = window.innerWidth
+      < 640 ? 18 : 32; for (var i = 0; i < count; i++) {
+        var flake = document.createElement('span');
+        flake.className = 'snow'; flake.textContent = '❋'; flake.style.left = Math.random() * 100 + 'vw';
+        flake.style.fontSize = (8 + Math.random() * 10) + 'px'; flake.style.animationDuration = (8 + Math.random() * 10)
+          + 's'; flake.style.animationDelay = (Math.random() * 8) + 's'; container.appendChild(flake);
+      }
+  })(); (function
+    () {
+      var audio = document.getElementById('bgMusic'); var btn = document.getElementById('musicToggle'); if (!audio
+        || !btn) { return; } var iconPlay = document.getElementById('iconPlay'); var
+          iconPause = document.getElementById('iconPause'); var playing = false; btn.addEventListener('click', function () {
+            if (playing) { audio.pause(); iconPlay.classList.remove('hidden'); iconPause.classList.add('hidden'); } else {
+              audio.play().catch(function () { }); iconPlay.classList.add('hidden'); iconPause.classList.remove('hidden');
+            }
+            playing = !playing;
+          });
+  })(); </script>
 </body>
 
 </html>
