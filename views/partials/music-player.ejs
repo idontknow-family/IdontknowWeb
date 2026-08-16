@@ -30,6 +30,7 @@
       var iconPlay = document.getElementById('iconPlay');
       var iconPause = document.getElementById('iconPause');
       var playing = false;
+      var started = false;
 
       function setPlayingUI(isPlaying) {
         iconPlay.classList.toggle('hidden', isPlaying);
@@ -39,17 +40,37 @@
 
       <% if (isYouTube && youtubeId) { %>
         var ytPlayer;
+        var ytReady = false;
+
         window.onYouTubeIframeAPIReady = function () {
           ytPlayer = new YT.Player('ytPlayer', {
             height: '0',
             width: '0',
             videoId: '<%= youtubeId %>',
-            playerVars: { autoplay: 0, controls: 0, playlist: '<%= youtubeId %>', loop: 1 }
+            playerVars: { autoplay: 0, controls: 0, playlist: '<%= youtubeId %>', loop: 1 },
+            events: {
+              onReady: function () {
+                ytReady = true;
+                tryAutoStart();
+              }
+            }
           });
         };
         var ytScript = document.createElement('script');
         ytScript.src = 'https://www.youtube.com/iframe_api';
         document.head.appendChild(ytScript);
+
+        function startPlayback() {
+          if (!ytPlayer || !ytPlayer.playVideo || started) { return; }
+          ytPlayer.playVideo();
+          setPlayingUI(true);
+          started = true;
+        }
+
+        function tryAutoStart() {
+          if (!ytReady) { return; }
+          startPlayback();
+        }
 
         btn.addEventListener('click', function () {
           if (!ytPlayer || !ytPlayer.playVideo) { return; }
@@ -59,11 +80,24 @@
           } else {
             ytPlayer.playVideo();
             setPlayingUI(true);
+            started = true;
           }
         });
       <% } else if (!isYouTube) { %>
         var audio = document.getElementById('bgMusic');
         if (!audio) { return; }
+
+        function startPlayback() {
+          if (started) { return; }
+          audio.play().then(function () {
+            setPlayingUI(true);
+            started = true;
+          }).catch(function () {
+            // Blocked — will retry on first user interaction below
+          });
+        }
+        tryAutoStart = startPlayback;
+
         btn.addEventListener('click', function () {
           if (playing) {
             audio.pause();
@@ -71,9 +105,24 @@
           } else {
             audio.play().catch(function () {});
             setPlayingUI(true);
+            started = true;
           }
         });
       <% } %>
+
+      // Attempt autoplay immediately (works if browser allows it)
+      if (typeof tryAutoStart === 'function') { tryAutoStart(); }
+
+      // Fallback: start on the very first interaction anywhere on the page
+      function firstInteractionStart() {
+        if (!started && typeof startPlayback === 'function') { startPlayback(); }
+        document.removeEventListener('click', firstInteractionStart);
+        document.removeEventListener('touchstart', firstInteractionStart);
+        document.removeEventListener('keydown', firstInteractionStart);
+      }
+      document.addEventListener('click', firstInteractionStart);
+      document.addEventListener('touchstart', firstInteractionStart);
+      document.addEventListener('keydown', firstInteractionStart);
     })();
   </script>
 <% } %>
