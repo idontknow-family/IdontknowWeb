@@ -33,6 +33,7 @@ router.get('/roster', async (req, res, next) => {
     res.render('roster', {
       title: `Member - ${process.env.FAMILY_NAME || 'FAMILY'}`,
       familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
+      backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
       members,
       rankLabels: RANK_LABELS,
     });
