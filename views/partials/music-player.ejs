@@ -25,6 +25,9 @@
 
   <script>
     (function () {
+      // Volume: 0.0 (silent) to 1.0 (full). Adjust this number to taste.
+      var MUSIC_VOLUME = 0.4;
+
       var btn = document.getElementById('musicToggle');
       if (!btn) { return; }
       var iconPlay = document.getElementById('iconPlay');
@@ -51,6 +54,7 @@
             events: {
               onReady: function () {
                 ytReady = true;
+                ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
                 tryAutoStart();
               }
             }
@@ -62,6 +66,7 @@
 
         function startPlayback() {
           if (!ytPlayer || !ytPlayer.playVideo || started) { return; }
+          ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
           ytPlayer.playVideo();
           setPlayingUI(true);
           started = true;
@@ -78,6 +83,7 @@
             ytPlayer.pauseVideo();
             setPlayingUI(false);
           } else {
+            ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
             ytPlayer.playVideo();
             setPlayingUI(true);
             started = true;
@@ -86,9 +92,11 @@
       <% } else if (!isYouTube) { %>
         var audio = document.getElementById('bgMusic');
         if (!audio) { return; }
+        audio.volume = MUSIC_VOLUME;
 
         function startPlayback() {
           if (started) { return; }
+          audio.volume = MUSIC_VOLUME;
           audio.play().then(function () {
             setPlayingUI(true);
             started = true;
@@ -103,6 +111,7 @@
             audio.pause();
             setPlayingUI(false);
           } else {
+            audio.volume = MUSIC_VOLUME;
             audio.play().catch(function () {});
             setPlayingUI(true);
             started = true;
