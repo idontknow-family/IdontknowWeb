@@ -3,7 +3,6 @@
 
 <head>
     <%- include('partials/head') %>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body class="antialiased">
@@ -11,21 +10,12 @@
     <%- include('partials/page-transition') %>
 
     <header class="max-w-6xl mx-auto px-6 pt-10 pb-6">
-        <div class="flex items-center justify-between mb-6">
-            <a href="/" class="back-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" class="w-4 h-4">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-            </a>
-            <button id="exportBtn" class="export-btn font-display font-700 tracking-widest uppercase text-xs">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5">
-                    <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Export
-            </button>
-        </div>
-
+        <a href="/" class="back-btn mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" class="w-4 h-4">
+                <path d="M15 18l-6-6 6-6" />
+            </svg>
+        </a>
         <h1
             class="font-display glow-text text-3xl md:text-4xl font-700 text-white tracking-widest uppercase text-center">
             MEMBER &mdash; <%= familyName %>
@@ -36,44 +26,39 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-16">
-        <div id="exportArea" class="export-capture">
-            <p class="export-capture-title font-display font-700 tracking-widest uppercase text-white text-center hidden">
-                <%= familyName %>
-            </p>
-            <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                <% members.forEach(m=> { %>
-                    <div class="member-card glass-card rounded-2xl p-6 text-center"
-                        data-name="<%= m.icName.toLowerCase() %>">
-                        <img src="<%= m.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(m.icName) %>"
-                            alt="<%= m.icName %>" class="avatar-ring w-20 h-20 rounded-full object-cover mx-auto mb-4" crossorigin="anonymous"
-                            onerror="this.onerror=null;this.src='https://api.dicebear.com/7.x/shapes/svg?seed=<%= encodeURIComponent(m.icName) %>';" />
-                        <h3 class="font-display text-lg text-white font-600">
-                            <%= m.icName %>
-                        </h3>
-                        <div class="flex items-center justify-center gap-2 mt-3">
-                            <span class="badge badge-<%= m.rank.toLowerCase() %>">
-                                <%= rankLabels[m.rank] %>
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-center gap-1.5 mt-3">
-                            <span class="status-dot status-<%= m.status.toLowerCase() %>"></span>
-                            <span class="text-[11px] text-white/40 uppercase tracking-wider">
-                                <%= m.status %>
-                            </span>
-                        </div>
-                        <% if (m.facebookUrl) { %>
-                            <a href="<%= m.facebookUrl %>" target="_blank" rel="noopener noreferrer"
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 mt-4 transition export-hide">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-4 h-4 text-white/70">
-                                    <path
-                                        d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
-                                </svg>
-                            </a>
-                            <% } %>
+        <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <% members.forEach(m=> { %>
+                <div class="member-card glass-card rounded-2xl p-6 text-center"
+                    data-name="<%= m.icName.toLowerCase() %>">
+                    <img src="<%= m.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(m.icName) %>"
+                        alt="<%= m.icName %>" class="avatar-ring w-20 h-20 rounded-full object-cover mx-auto mb-4"
+                        onerror="this.onerror=null;this.src='https://api.dicebear.com/7.x/shapes/svg?seed=<%= encodeURIComponent(m.icName) %>';" />
+                    <h3 class="font-display text-lg text-white font-600">
+                        <%= m.icName %>
+                    </h3>
+                    <div class="flex items-center justify-center gap-2 mt-3">
+                        <span class="badge badge-<%= m.rank.toLowerCase() %>">
+                            <%= rankLabels[m.rank] %>
+                        </span>
                     </div>
-                    <% }) %>
-            </div>
+                    <div class="flex items-center justify-center gap-1.5 mt-3">
+                        <span class="status-dot status-<%= m.status.toLowerCase() %>"></span>
+                        <span class="text-[11px] text-white/40 uppercase tracking-wider">
+                            <%= m.status %>
+                        </span>
+                    </div>
+                    <% if (m.facebookUrl) { %>
+                        <a href="<%= m.facebookUrl %>" target="_blank" rel="noopener noreferrer"
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 mt-4 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-4 h-4 text-white/70">
+                                <path
+                                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+                            </svg>
+                        </a>
+                        <% } %>
+                </div>
+                <% }) %>
         </div>
         <p id="emptyState" class="hidden text-center text-white/30 py-16 font-display tracking-widest">NO MEMBERS FOUND
         </p>
@@ -99,39 +84,6 @@
             });
             emptyState.classList.toggle('hidden', visibleCount !== 0 || cards.length === 0);
         });
-
-        const exportBtn = document.getElementById('exportBtn');
-        if (exportBtn && typeof html2canvas !== 'undefined') {
-            exportBtn.addEventListener('click', async () => {
-                const area = document.getElementById('exportArea');
-                const title = area.querySelector('.export-capture-title');
-                const originalText = exportBtn.innerHTML;
-
-                exportBtn.disabled = true;
-                exportBtn.textContent = 'Generating...';
-                title.classList.remove('hidden');
-                area.classList.add('is-exporting');
-
-                try {
-                    const canvas = await html2canvas(area, {
-                        backgroundColor: '#0a0a0c',
-                        scale: 2,
-                        useCORS: true,
-                    });
-                    const link = document.createElement('a');
-                    link.download = 'roster.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                } catch (err) {
-                    alert('Export failed. Try again.');
-                } finally {
-                    title.classList.add('hidden');
-                    area.classList.remove('is-exporting');
-                    exportBtn.disabled = false;
-                    exportBtn.innerHTML = originalText;
-                }
-            });
-        }
     </script>
 </body>
 
