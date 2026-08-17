@@ -17,6 +17,7 @@ router.get('/', (req, res) => {
     familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
     familySlogan: process.env.FAMILY_SLOGAN || 'Loyalty. Power. Legacy.',
     familyLogoUrl: process.env.FAMILY_LOGO_URL || '',
+    familyLogoVideoUrl: process.env.FAMILY_LOGO_VIDEO_URL || '',
     backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
     designCredit: process.env.DESIGN_CREDIT || '',
     musicCredit: process.env.MUSIC_CREDIT || '',
