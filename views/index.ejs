@@ -23,22 +23,21 @@
     </div>
 
     <div class="logo-panel intro-fade intro-delay-2">
-      <% if (familyLogoVideoUrl) { %>
-        <video
-          class="logo-video"
-          autoplay
-          loop
-          muted
-          playsinline
-          onerror="this.style.display='none'; var f=document.getElementById('logoFallback'); if(f){f.style.display='flex';}"
-        >
-          <source src="<%= familyLogoVideoUrl %>" type="video/mp4" />
-        </video>
-        <% if (familyLogoUrl) { %>
-          <div id="logoFallback" style="display:none;" class="w-full h-full items-center justify-center">
-            <img src="<%= familyLogoUrl %>" alt="<%= familyName %> logo" class="logo-float" />
-          </div>
-        <% } %>
+      <% if (familyLogoVideoColorUrl && familyLogoVideoMatteUrl) { %>
+        <div class="relative w-full h-full flex items-center justify-center">
+          <!-- Canvas สำหรับแสดงผลโลโก้โปร่งใส -->
+          <canvas id="lumaCanvas" class="logo-video max-w-full max-h-full object-contain"></canvas>
+          
+          <!-- ซ่อน Video Element ไว้ดึง Frame Data -->
+          <video id="vColor" src="<%= familyLogoVideoColorUrl %>" autoplay loop muted playsinline style="display:none;" crossorigin="anonymous"></video>
+          <video id="vMatte" src="<%= familyLogoVideoMatteUrl %>" autoplay loop muted playsinline style="display:none;" crossorigin="anonymous"></video>
+
+          <% if (familyLogoUrl) { %>
+            <div id="logoFallback" style="display:none;" class="w-full h-full items-center justify-center">
+              <img src="<%= familyLogoUrl %>" alt="<%= familyName %> logo" class="logo-float" />
+            </div>
+          <% } %>
+        </div>
       <% } else if (familyLogoUrl) { %>
         <img src="<%= familyLogoUrl %>" alt="<%= familyName %> logo" class="logo-float" />
       <% } else { %>
@@ -61,6 +60,7 @@
   <%- include('partials/music-player', { backgroundMusicUrl: backgroundMusicUrl }) %>
 
 <script>
+  // Snow Effect
   (function () {
     var container = document.getElementById('snowContainer');
     if (!container) { return; }
@@ -75,6 +75,82 @@
       flake.style.animationDelay = (Math.random() * 8) + 's';
       container.appendChild(flake);
     }
+  })();
+
+  // Luma Matte Video Renderer
+  (function () {
+    const vColor = document.getElementById('vColor');
+    const vMatte = document.getElementById('vMatte');
+    const canvas = document.getElementById('lumaCanvas');
+    const fallback = document.getElementById('logoFallback');
+
+    if (!vColor || !vMatte || !canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const offCanvasColor = document.createElement('canvas');
+    const offCtxColor = offCanvasColor.getContext('2d', { willReadFrequently: true });
+    const offCanvasMatte = document.createElement('canvas');
+    const offCtxMatte = offCanvasMatte.getContext('2d', { willReadFrequently: true });
+
+    let isRendering = true;
+
+    function handleError() {
+      isRendering = false;
+      canvas.style.display = 'none';
+      if (fallback) fallback.style.display = 'flex';
+    }
+
+    vColor.addEventListener('error', handleError);
+    vMatte.addEventListener('error', handleError);
+
+    function drawFrame() {
+      if (!isRendering) return;
+
+      if (vColor.readyState >= 2 && vMatte.readyState >= 2) {
+        const w = vColor.videoWidth || 500;
+        const h = vColor.videoHeight || 500;
+
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+          offCanvasColor.width = w;
+          offCanvasColor.height = h;
+          offCanvasMatte.width = w;
+          offCanvasMatte.height = h;
+        }
+
+        // คุมจังหวะให้วิดีโอทั้งสองเล่นตรงกันเสมอ
+        if (Math.abs(vColor.currentTime - vMatte.currentTime) > 0.08) {
+          vMatte.currentTime = vColor.currentTime;
+        }
+
+        // วาดภาพวิดีโอสีและภาพวิดีโอเงาลง Offscreen Canvas
+        offCtxColor.drawImage(vColor, 0, 0, w, h);
+        offCtxMatte.drawImage(vMatte, 0, 0, w, h);
+
+        const imgDataColor = offCtxColor.getImageData(0, 0, w, h);
+        const imgDataMatte = offCtxMatte.getImageData(0, 0, w, h);
+
+        const dataColor = imgDataColor.data;
+        const dataMatte = imgDataMatte.data;
+
+        // นำค่าความสว่างจาก vMatte ไปใส่เป็น Alpha (ความโปร่งใส) ของ vColor
+        for (let i = 0; i < dataColor.length; i += 4) {
+          dataColor[i + 3] = dataMatte[i];
+        }
+
+        ctx.putImageData(imgDataColor, 0, 0);
+      }
+
+      requestAnimationFrame(drawFrame);
+    }
+
+    Promise.all([
+      vColor.play().catch(() => {}),
+      vMatte.play().catch(() => {})
+    ]).then(() => {
+      requestAnimationFrame(drawFrame);
+    });
   })();
 </script>
 </body>

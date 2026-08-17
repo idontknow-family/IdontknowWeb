@@ -479,3 +479,10 @@ body {
 .export-capture.is-exporting .export-hide {
   visibility: hidden;
 }
+
+.logo-video {
+  max-width: 90%;
+  max-height: 95%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 40px rgba(212, 175, 106, 0.3));
+}
