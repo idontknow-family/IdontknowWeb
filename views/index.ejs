@@ -11,7 +11,7 @@
     <div class="hero-bg"></div>
     <div id="snowContainer"></div>
 
-    <div class="hero-title">
+    <div class="hero-title intro-fade intro-delay-1">
       <h1 class="font-display glow-text text-5xl md:text-7xl font-700 text-white tracking-widest uppercase">
         <%= familyName %>
       </h1>
@@ -20,7 +20,7 @@
       </p>
     </div>
 
-    <div class="logo-panel">
+    <div class="logo-panel intro-fade intro-delay-2">
       <% if (familyLogoUrl) { %>
         <img src="<%= familyLogoUrl %>" alt="<%= familyName %> logo" class="logo-float" />
         <% } else { %>
@@ -28,11 +28,11 @@
           <% } %>
     </div>
 
-    <a href="/roster" class="enter-btn font-display font-700 tracking-[0.2em] uppercase text-sm">
+    <a href="/roster" class="enter-btn font-display font-700 tracking-[0.2em] uppercase text-sm intro-fade intro-delay-3">
       <%= familyName %>
     </a>
 
-    <p class="relative z-10 text-white/20 text-[11px] mt-16 text-center">
+    <p class="relative z-10 text-white/20 text-[11px] mt-16 text-center intro-fade intro-delay-4">
       &copy; <%= new Date().getFullYear() %>
         <%= familyName.split(' ')[0] %>
       <% if (designCredit) { %> &middot; Designed by <%= designCredit %><% } %>
