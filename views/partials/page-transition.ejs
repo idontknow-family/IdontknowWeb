@@ -1,0 +1,37 @@
+<div id="pageTransitionOverlay" class="page-transition-overlay">
+  <div class="page-transition-spinner"></div>
+</div>
+
+<script>
+  (function () {
+    var overlay = document.getElementById('pageTransitionOverlay');
+    if (!overlay) { return; }
+
+    window.addEventListener('load', function () {
+      overlay.classList.add('is-hidden');
+    });
+
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest('a[href]');
+      if (!link) { return; }
+      if (link.target === '_blank') { return; }
+      if (link.closest('.music-widget')) { return; }
+
+      var url;
+      try {
+        url = new URL(link.href, window.location.href);
+      } catch (err) {
+        return;
+      }
+      if (url.origin !== window.location.origin) { return; }
+      if (url.href === window.location.href) { return; }
+
+      e.preventDefault();
+      overlay.classList.remove('is-hidden');
+      overlay.classList.add('is-entering');
+      setTimeout(function () {
+        window.location.href = url.href;
+      }, 260);
+    });
+  })();
+</script>

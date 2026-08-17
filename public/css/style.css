@@ -400,3 +400,82 @@ body {
     transform: translateY(0);
   }
 }
+
+/* ===== Page transition overlay (#5) ===== */
+.page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #0a0a0c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.28s ease;
+  pointer-events: none;
+}
+
+.page-transition-overlay.is-entering {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.page-transition-overlay.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.page-transition-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid rgba(212, 175, 106, 0.2);
+  border-top-color: var(--gold);
+  animation: transitionSpin 0.7s linear infinite;
+}
+
+@keyframes transitionSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== Roster export button (#10) ===== */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 106, 0.35);
+  background: rgba(212, 175, 106, 0.06);
+  color: #f0d9a8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+  border-color: rgba(212, 175, 106, 0.7);
+  background: rgba(212, 175, 106, 0.12);
+}
+
+.export-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.export-capture {
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.export-capture-title {
+  font-size: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.export-capture.is-exporting {
+  background: #0a0a0c;
+}
+
+.export-capture.is-exporting .export-hide {
+  visibility: hidden;
+}

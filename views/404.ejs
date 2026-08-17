@@ -3,11 +3,39 @@
 <head>
   <%- include('partials/head') %>
 </head>
-<body class="antialiased flex items-center justify-center min-h-screen">
-  <div class="text-center">
-    <h1 class="font-display text-6xl text-gold glow-text font-700">404</h1>
-    <p class="text-white/40 mt-3">Page not found.</p>
-    <a href="/" class="text-gold/70 hover:text-gold text-sm mt-6 inline-block">&larr; Back to roster</a>
-  </div>
+<body class="antialiased">
+
+  <%- include('partials/page-transition') %>
+
+  <section class="hero-wrap" style="min-height:100vh;">
+    <div class="hero-bg"></div>
+    <div id="snowContainer"></div>
+
+    <div class="relative z-10 text-center intro-fade intro-delay-1" style="margin-top: 20vh;">
+      <h1 class="font-display glow-text text-7xl md:text-9xl font-700 text-white tracking-widest">404</h1>
+      <p class="text-white/40 mt-4 tracking-[0.2em] text-sm uppercase">Page not found</p>
+      <a href="/" class="enter-btn font-display font-700 tracking-[0.2em] uppercase text-sm inline-block mt-10">
+        Back Home
+      </a>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var container = document.getElementById('snowContainer');
+      if (!container) { return; }
+      var count = window.innerWidth < 640 ? 18 : 32;
+      for (var i = 0; i < count; i++) {
+        var flake = document.createElement('span');
+        flake.className = 'snow';
+        flake.textContent = '❋';
+        flake.style.left = Math.random() * 100 + 'vw';
+        flake.style.fontSize = (8 + Math.random() * 10) + 'px';
+        flake.style.animationDuration = (8 + Math.random() * 10) + 's';
+        flake.style.animationDelay = (Math.random() * 8) + 's';
+        container.appendChild(flake);
+      }
+    })();
+  </script>
 </body>
 </html>
