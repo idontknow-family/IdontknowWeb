@@ -7,9 +7,17 @@
     var overlay = document.getElementById('pageTransitionOverlay');
     if (!overlay) { return; }
 
-    window.addEventListener('load', function () {
+    function hideOverlay() {
+      if (overlay.classList.contains('is-hidden')) return;
       overlay.classList.add('is-hidden');
+    }
+
+    // ปลดหน้าดำทันทีเมื่อพร้อม หรือล็อคเวลาไม่เกิน 0.8 วินาทีแน่นอน
+    window.addEventListener('load', hideOverlay);
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(hideOverlay, 300);
     });
+    setTimeout(hideOverlay, 800); // Safety net ตัดจบแน่นอน
 
     document.addEventListener('click', function (e) {
       var link = e.target.closest('a[href]');

@@ -27,12 +27,19 @@
 
     <main class="max-w-6xl mx-auto px-6 pb-16">
         <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <% members.forEach(m=> { %>
+            <% members.forEach(m=> { 
+                // Helper จัดการ Path รูปภาพโปรไฟล์
+                let avatarSrc = m.avatarUrl;
+                if (avatarSrc && !avatarSrc.startsWith('http') && !avatarSrc.startsWith('/')) {
+                    avatarSrc = '/' + avatarSrc;
+                }
+                const fallbackSrc = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(m.icName) + '&background=111827&color=ffffff&bold=true';
+            %>
                 <div class="member-card glass-card rounded-2xl p-6 text-center"
                     data-name="<%= m.icName.toLowerCase() %>">
-                    <img src="<%= m.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(m.icName) %>"
+                    <img src="<%= avatarSrc || fallbackSrc %>"
                         alt="<%= m.icName %>" class="avatar-ring w-20 h-20 rounded-full object-cover mx-auto mb-4"
-                        onerror="this.onerror=null;this.src='https://api.dicebear.com/7.x/shapes/svg?seed=<%= encodeURIComponent(m.icName) %>';" />
+                        onerror="this.onerror=null;this.src='<%= fallbackSrc %>';" />
                     <h3 class="font-display text-lg text-white font-600">
                         <%= m.icName %>
                     </h3>
