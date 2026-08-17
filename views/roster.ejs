@@ -28,11 +28,18 @@
     <main class="max-w-6xl mx-auto px-6 pb-16">
         <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <% members.forEach(m=> { 
-                // Helper จัดการ Path รูปภาพโปรไฟล์
-                let avatarSrc = m.avatarUrl;
-                if (avatarSrc && !avatarSrc.startsWith('http') && !avatarSrc.startsWith('/')) {
-                    avatarSrc = '/' + avatarSrc;
+                let avatarSrc = m.avatarUrl ? m.avatarUrl.trim() : '';
+                
+                // แปลง Path รูปภาพให้อ่านจากไฟล์ในเครื่องอัตโนมัติ
+                if (avatarSrc) {
+                    if (avatarSrc.includes('githubusercontent.com')) {
+                        const filename = avatarSrc.split('/').pop();
+                        avatarSrc = '/images/' + filename;
+                    } else if (!avatarSrc.startsWith('http')) {
+                        avatarSrc = avatarSrc.replace(/^(\/)?(public\/)?/, '/');
+                    }
                 }
+                
                 const fallbackSrc = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(m.icName) + '&background=111827&color=ffffff&bold=true';
             %>
                 <div class="member-card glass-card rounded-2xl p-6 text-center"
