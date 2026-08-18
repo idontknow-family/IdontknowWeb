@@ -3,6 +3,7 @@ const router = express.Router();
 const prisma = require('../config/db');
 const { requireAuth } = require('../middleware/auth');
 const uploadSingleAvatar = require('../middleware/upload');
+const resolveAvatarUrl = require('../utils/resolveAvatarUrl');
 
 router.use(requireAuth);
 
@@ -15,11 +16,12 @@ router.get('/', async (req, res, next) => {
     const members = await prisma.member.findMany({
       orderBy: [{ rank: 'asc' }, { icName: 'asc' }],
     });
+    const membersResolved = members.map((m) => ({ ...m, resolvedAvatarUrl: resolveAvatarUrl(m.avatarUrl) }));
     res.render('admin/dashboard', {
       title: 'Admin Dashboard',
       familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
       adminUsername: req.session.adminUsername,
-      members,
+      members: membersResolved,
       RANKS,
       STATUSES,
     });

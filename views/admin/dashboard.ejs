@@ -31,7 +31,7 @@
           <% members.forEach(m => { %>
             <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
               <td class="px-5 py-3 flex items-center gap-3">
-                <img src="<%= m.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(m.icName) %>"
+                <img src="<%= m.resolvedAvatarUrl || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + encodeURIComponent(m.icName) %>"
                   class="w-9 h-9 rounded-full object-cover avatar-ring" alt="" />
                 <div class="text-white font-medium"><%= m.icName %></div>
               </td>
