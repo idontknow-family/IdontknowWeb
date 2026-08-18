@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../config/db');
+const resolveAvatarUrl = require('../utils/resolveAvatarUrl');
 
 const RANK_LABELS = {
   LEADER: 'Leader',
@@ -10,7 +11,6 @@ const RANK_LABELS = {
   RECRUIT: 'Recruit',
 };
 
-// Home / Landing page — hero + spinning logo only
 router.get('/', (req, res) => {
   res.render('index', {
     title: `${process.env.FAMILY_NAME || 'FAMILY'} | Home`,
@@ -25,18 +25,22 @@ router.get('/', (req, res) => {
   });
 });
 
-// Dedicated Member Roster page
 router.get('/roster', async (req, res, next) => {
   try {
     const members = await prisma.member.findMany({
       orderBy: [{ rank: 'asc' }, { icName: 'asc' }],
     });
 
+    const membersResolved = members.map((m) => ({
+      ...m,
+      resolvedAvatarUrl: resolveAvatarUrl(m.avatarUrl),
+    }));
+
     res.render('roster', {
       title: `Member - ${process.env.FAMILY_NAME || 'FAMILY'}`,
       familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
       backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
-      members,
+      members: membersResolved,
       rankLabels: RANK_LABELS,
     });
   } catch (err) {
