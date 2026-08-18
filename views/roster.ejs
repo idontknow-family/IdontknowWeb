@@ -42,7 +42,7 @@
             %>
                 <div class="member-card glass-card rounded-2xl p-6 text-center"
                     data-name="<%= m.icName.toLowerCase() %>">
-                    <img src="<%= avatarSrc || fallbackSrc %>"
+                    <img src="<%= m.resolvedAvatarUrl || fallbackSrc %>"
                         alt="<%= m.icName %>" class="avatar-ring w-20 h-20 rounded-full object-cover mx-auto mb-4"
                         onerror="this.onerror=null;this.src='<%= fallbackSrc %>';" />
                     <h3 class="font-display text-lg text-white font-600">
