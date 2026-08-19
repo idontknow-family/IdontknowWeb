@@ -11,6 +11,14 @@ const RANK_LABELS = {
   RECRUIT: 'Recruit',
 };
 
+const RANK_ORDER = {
+  LEADER: 1,
+  CO_LEADER: 2,
+  HIGH_COMMAND: 3,
+  OFFICIAL_MEMBER: 4,
+  RECRUIT: 5,
+};
+
 router.get('/', (req, res) => {
   res.render('index', {
     title: `${process.env.FAMILY_NAME || 'FAMILY'} | Home`,
@@ -28,24 +36,21 @@ router.get('/', (req, res) => {
 router.get('/roster', async (req, res, next) => {
   try {
     const members = await prisma.member.findMany({
-      orderBy: [{ rank: 'asc' }, { icName: 'asc' }],
+      orderBy: [{ icName: 'asc' }],
     });
 
-    const membersResolved = members.map((m) => ({
-      ...m,
-      resolvedAvatarUrl: resolveAvatarUrl(m.avatarUrl),
-    }));
-
-    // แยก Leader ออกมาโชว์เด่นๆ ข้างบน ที่เหลือไปอยู่ใน grid ที่ paginate
-    const leaders = membersResolved.filter((m) => m.rank === 'LEADER');
-    const others = membersResolved.filter((m) => m.rank !== 'LEADER');
+    const membersResolved = members
+      .map((m) => ({
+        ...m,
+        resolvedAvatarUrl: resolveAvatarUrl(m.avatarUrl),
+      }))
+      .sort((a, b) => (RANK_ORDER[a.rank] || 99) - (RANK_ORDER[b.rank] || 99) || a.icName.localeCompare(b.icName));
 
     res.render('roster', {
       title: `Member - ${process.env.FAMILY_NAME || 'FAMILY'}`,
       familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
       backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
-      leaders,
-      others,
+      members: membersResolved,
       rankLabels: RANK_LABELS,
     });
   } catch (err) {
