@@ -1,155 +1,153 @@
-<%
-  var musicUrl = backgroundMusicUrl || '';
-  var isYouTube = /youtube\.com|youtu\.be/.test(musicUrl);
-  var youtubeId = '';
-  if (isYouTube) {
-    var ytMatch = musicUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/);
-    youtubeId = ytMatch ? ytMatch[1] : '';
-  }
-%>
-<% if (musicUrl) { %>
-  <% if (isYouTube && youtubeId) { %>
-    <div id="ytPlayer" style="position:absolute;width:0;height:0;overflow:hidden;"></div>
-  <% } else if (!isYouTube) { %>
-    <audio id="bgMusic" src="<%= musicUrl %>" loop></audio>
-  <% } %>
+<% var musicUrl=backgroundMusicUrl || '' ; var isYouTube=/youtube\.com|youtu\.be/.test(musicUrl); var youtubeId='' ; if
+  (isYouTube) { var ytMatch=musicUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/);
+  youtubeId=ytMatch ? ytMatch[1] : '' ; } %>
+  <% if (musicUrl) { %>
+    <% if (isYouTube && youtubeId) { %>
+      <div id="ytPlayer" style="position:absolute;width:0;height:0;overflow:hidden;"></div>
+      <% } else if (!isYouTube) { %>
+        <audio id="bgMusic" src="<%= musicUrl %>" loop></audio>
+        <% } %>
 
-  <div class="music-widget">
-    <div class="volume-slider-wrap">
-      <input id="volumeSlider" class="volume-slider" type="range" min="0" max="100" value="40" aria-label="Volume" />
-    </div>
+          <div class="music-widget">
+            <div class="volume-slider-wrap">
+              <input id="volumeSlider" class="volume-slider" type="range" min="0" max="100" value="40"
+                aria-label="Volume" />
+            </div>
 
-    <button id="musicToggle" class="music-toggle" aria-label="Toggle music">
-      <svg id="iconPause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-white/70">
-        <rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>
-      </svg>
-      <svg id="iconPlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-white/70 hidden">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-    </button>
-  </div>
+            <button id="musicToggle" class="music-toggle" aria-label="Toggle music">
+              <svg id="iconPause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                class="w-4 h-4 text-white/70">
+                <rect x="6" y="5" width="4" height="14" rx="1" />
+                <rect x="14" y="5" width="4" height="14" rx="1" />
+              </svg>
+              <svg id="iconPlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                class="w-4 h-4 text-white/70 hidden">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </div>
 
-  <script>
-    (function () {
-      var MUSIC_VOLUME = 0.4;
+          <script>
+            (function () {
+              var MUSIC_VOLUME = 0.4;
 
-      var btn = document.getElementById('musicToggle');
-      var slider = document.getElementById('volumeSlider');
-      if (!btn) { return; }
-      var iconPlay = document.getElementById('iconPlay');
-      var iconPause = document.getElementById('iconPause');
-      var playing = false;
-      var started = false;
+              var btn = document.getElementById('musicToggle');
+              var slider = document.getElementById('volumeSlider');
+              if (!btn) { return; }
+              var iconPlay = document.getElementById('iconPlay');
+              var iconPause = document.getElementById('iconPause');
+              var playing = false;
+              var started = false;
 
-      function setPlayingUI(isPlaying) {
-        iconPlay.classList.toggle('hidden', isPlaying);
-        iconPause.classList.toggle('hidden', !isPlaying);
-        playing = isPlaying;
-      }
+              function setPlayingUI(isPlaying) {
+                iconPlay.classList.toggle('hidden', isPlaying);
+                iconPause.classList.toggle('hidden', !isPlaying);
+                playing = isPlaying;
+              }
 
       <% if (isYouTube && youtubeId) { %>
         var ytPlayer;
-        var ytReady = false;
+                var ytReady = false;
 
-        window.onYouTubeIframeAPIReady = function () {
-          ytPlayer = new YT.Player('ytPlayer', {
-            height: '0',
-            width: '0',
-            videoId: '<%= youtubeId %>',
-            playerVars: { autoplay: 0, controls: 0, playlist: '<%= youtubeId %>', loop: 1 },
-            events: {
-              onReady: function () {
-                ytReady = true;
-                ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
-                tryAutoStart();
-              }
-            }
-          });
-        };
-        var ytScript = document.createElement('script');
-        ytScript.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(ytScript);
+                window.onYouTubeIframeAPIReady = function () {
+                  ytPlayer = new YT.Player('ytPlayer', {
+                    height: '0',
+                    width: '0',
+                    videoId: '<%= youtubeId %>',
+                    playerVars: { autoplay: 0, controls: 0, playlist: '<%= youtubeId %>', loop: 1 },
+                    events: {
+                      onReady: function () {
+                        ytReady = true;
+                        ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
+                        tryAutoStart();
+                      }
+                    }
+                  });
+                };
+                var ytScript = document.createElement('script');
+                ytScript.src = 'https://www.youtube.com/iframe_api';
+                document.head.appendChild(ytScript);
 
-        function startPlayback() {
-          if (!ytPlayer || !ytPlayer.playVideo || started) { return; }
-          ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
-          ytPlayer.playVideo();
-          setPlayingUI(true);
-          started = true;
-        }
+                function startPlayback() {
+                  if (!ytPlayer || !ytPlayer.playVideo || started) { return; }
+                  ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
+                  ytPlayer.playVideo();
+                  setPlayingUI(true);
+                  started = true;
+                }
 
-        function tryAutoStart() {
-          if (!ytReady) { return; }
-          startPlayback();
-        }
+                function tryAutoStart() {
+                  if (!ytReady) { return; }
+                  startPlayback();
+                }
 
-        btn.addEventListener('click', function () {
-          if (!ytPlayer || !ytPlayer.playVideo) { return; }
-          if (playing) {
-            ytPlayer.pauseVideo();
-            setPlayingUI(false);
-          } else {
-            ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
-            ytPlayer.playVideo();
-            setPlayingUI(true);
-            started = true;
-          }
-        });
+                btn.addEventListener('click', function () {
+                  if (!ytPlayer || !ytPlayer.playVideo) { return; }
+                  if (playing) {
+                    ytPlayer.pauseVideo();
+                    setPlayingUI(false);
+                  } else {
+                    ytPlayer.setVolume(Math.round(MUSIC_VOLUME * 100));
+                    ytPlayer.playVideo();
+                    setPlayingUI(true);
+                    started = true;
+                  }
+                });
 
-        if (slider) {
-          slider.addEventListener('input', function () {
-            MUSIC_VOLUME = Number(slider.value) / 100;
-            if (ytPlayer && ytPlayer.setVolume) {
-              ytPlayer.setVolume(Number(slider.value));
-            }
-          });
-        }
+                if (slider) {
+                  slider.addEventListener('input', function () {
+                    MUSIC_VOLUME = Number(slider.value) / 100;
+                    if (ytPlayer && ytPlayer.setVolume) {
+                      ytPlayer.setVolume(Number(slider.value));
+                    }
+                  });
+                }
       <% } else if (!isYouTube) { %>
         var audio = document.getElementById('bgMusic');
-        if (!audio) { return; }
-        audio.volume = MUSIC_VOLUME;
+                if (!audio) { return; }
+                audio.volume = MUSIC_VOLUME;
 
-        function startPlayback() {
-          if (started) { return; }
-          audio.volume = MUSIC_VOLUME;
-          audio.play().then(function () {
-            setPlayingUI(true);
-            started = true;
-          }).catch(function () {});
-        }
-        tryAutoStart = startPlayback;
+                function startPlayback() {
+                  if (started) { return; }
+                  audio.volume = MUSIC_VOLUME;
+                  audio.play().then(function () {
+                    setPlayingUI(true);
+                    started = true;
+                  }).catch(function () { });
+                }
+                tryAutoStart = startPlayback;
 
-        btn.addEventListener('click', function () {
-          if (playing) {
-            audio.pause();
-            setPlayingUI(false);
-          } else {
-            audio.volume = MUSIC_VOLUME;
-            audio.play().catch(function () {});
-            setPlayingUI(true);
-            started = true;
-          }
-        });
+                btn.addEventListener('click', function () {
+                  if (playing) {
+                    audio.pause();
+                    setPlayingUI(false);
+                  } else {
+                    audio.volume = MUSIC_VOLUME;
+                    audio.play().catch(function () { });
+                    setPlayingUI(true);
+                    started = true;
+                  }
+                });
 
-        if (slider) {
-          slider.addEventListener('input', function () {
-            MUSIC_VOLUME = Number(slider.value) / 100;
-            audio.volume = MUSIC_VOLUME;
-          });
-        }
+                if (slider) {
+                  slider.addEventListener('input', function () {
+                    MUSIC_VOLUME = Number(slider.value) / 100;
+                    audio.volume = MUSIC_VOLUME;
+                  });
+                }
       <% } %>
 
       if (typeof tryAutoStart === 'function') { tryAutoStart(); }
 
-      function firstInteractionStart() {
-        if (!started && typeof startPlayback === 'function') { startPlayback(); }
-        document.removeEventListener('click', firstInteractionStart);
-        document.removeEventListener('touchstart', firstInteractionStart);
-        document.removeEventListener('keydown', firstInteractionStart);
-      }
-      document.addEventListener('click', firstInteractionStart);
-      document.addEventListener('touchstart', firstInteractionStart);
-      document.addEventListener('keydown', firstInteractionStart);
-    })();
-  </script>
-<% } %>
+              function firstInteractionStart() {
+                if (!started && typeof startPlayback === 'function') { startPlayback(); }
+                document.removeEventListener('click', firstInteractionStart);
+                document.removeEventListener('touchstart', firstInteractionStart);
+                document.removeEventListener('keydown', firstInteractionStart);
+              }
+              document.addEventListener('click', firstInteractionStart);
+              document.addEventListener('touchstart', firstInteractionStart);
+              document.addEventListener('keydown', firstInteractionStart);
+            })();
+          </script>
+          <% } %>
