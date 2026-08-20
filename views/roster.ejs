@@ -3,14 +3,13 @@
 
 <head>
     <%- include('partials/head') %>
-        <style>
-            /* บังคับให้การ์ดทุกใบขนาดและ Padding เท่ากันเป๊ะ */
-            .member-card {
-                height: 100% !important;
-                padding: 1.5rem !important;
-                margin: 0 !important;
-            }
-        </style>
+    <style>
+        .member-card {
+            height: 100% !important;
+            padding: 1.5rem !important;
+            margin: 0 !important;
+        }
+    </style>
 </head>
 
 <body class="antialiased">
@@ -24,7 +23,7 @@
         </a>
         <h1
             class="font-display glow-text text-3xl md:text-4xl font-700 text-white tracking-widest uppercase text-center">
-            MEMBER &mdash; <%= typeof familyName !=='undefined' ? familyName : '' %>
+            MEMBER &mdash; <%= typeof familyName !== 'undefined' ? familyName : '' %>
         </h1>
 
         <input id="searchInput" type="text" placeholder="ค้นหาสมาชิก..."
@@ -32,138 +31,146 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-16">
-        <% function getAvatarSrc(m) { if (m && m.resolvedAvatarUrl) return m.resolvedAvatarUrl; return getFallback(m); }
-            function getFallback(m) { var name=(m && m.icName) ? m.icName : 'Member' ;
-            return 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name)
-            + '&background=111827&color=ffffff&bold=true' ; } var safeMembers=(typeof members !=='undefined' &&
-            Array.isArray(members)) ? members : []; var safeRankLabels=(typeof rankLabels !=='undefined' && rankLabels)
-            ? rankLabels : {}; %>
+        <%
+            function getAvatarSrc(m) {
+                if (m && m.resolvedAvatarUrl) return m.resolvedAvatarUrl;
+                return getFallback(m);
+            }
+            function getFallback(m) {
+                var name = (m && m.icName) ? m.icName : 'Member';
+                return 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=111827&color=ffffff&bold=true';
+            }
+            var safeMembers = (typeof members !== 'undefined' && Array.isArray(members)) ? members : [];
+            var safeRankLabels = (typeof rankLabels !== 'undefined' && rankLabels) ? rankLabels : {};
+        %>
 
-            <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                <% safeMembers.forEach(function(m) { %>
-                    <% var rank=(m && m.rank) ? m.rank : 'MEMBER' ; var isLeader=rank==='LEADER' ; var status=(m &&
-                        m.status) ? m.status : 'OFFLINE' ; var icName=(m && m.icName) ? m.icName : 'Unknown' ; %>
-                        <div class="member-card glass-card rounded-2xl p-6 text-center relative flex flex-col justify-between"
-                            data-name="<%= icName.toLowerCase() %>">
-
-                            <div>
-                                <div class="relative inline-block mx-auto mb-4">
-                                    <% if (isLeader) { %>
-                                        <svg class="w-6 h-6 absolute -top-3 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow z-10"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm0 2h14v2H5v-2z" />
-                                        </svg>
-                                        <% } %>
-                                            <img src="<%= getAvatarSrc(m) %>" alt="<%= icName %>"
-                                                class="avatar-ring w-20 h-20 rounded-full object-cover mx-auto"
-                                                onerror="this.onerror=null;this.src='<%= getFallback(m) %>';" />
-                                </div>
-
-                                <h3 class="font-display text-lg text-white font-600">
-                                    <%= icName %>
-                                </h3>
-
-                                <div class="flex items-center justify-center gap-2 mt-3">
-                                    <span class="badge badge-<%= rank.toLowerCase() %>">
-                                        <%= safeRankLabels[rank] || rank %>
-                                    </span>
-                                </div>
-
-                                <div class="flex items-center justify-center gap-1.5 mt-3">
-                                    <span class="status-dot status-<%= status.toLowerCase() %>"></span>
-                                    <span class="text-[11px] text-white/40 uppercase tracking-wider">
-                                        <%= status %>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="mt-4 min-h-[32px] flex items-center justify-center">
-                                <% if (m && m.facebookUrl) { %>
-                                    <a href="<%= m.facebookUrl %>" target="_blank" rel="noopener noreferrer"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                            class="w-4 h-4 text-white/70">
-                                            <path
-                                                d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
-                                        </svg>
-                                    </a>
-                                    <% } %>
-                            </div>
+        <div id="memberGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <% safeMembers.forEach(function(m) { %>
+                <% 
+                    var rank = (m && m.rank) ? m.rank : 'MEMBER';
+                    var isLeader = rank === 'LEADER';
+                    var status = (m && m.status) ? m.status : 'OFFLINE';
+                    var icName = (m && m.icName) ? m.icName : 'Unknown';
+                %>
+                <div class="member-card glass-card rounded-2xl p-6 text-center relative flex flex-col justify-between"
+                    data-name="<%= icName.toLowerCase() %>">
+                    
+                    <div>
+                        <!-- กล่องหุ้มรูปโปรไฟล์ที่ล็อกขนาด w-20 h-20 เพื่อให้มงกุฎอยู่ตรงกลางเป๊ะ -->
+                        <div class="relative w-20 h-20 mx-auto mb-4">
+                            <% if (isLeader) { %>
+                                <svg class="w-7 h-7 absolute -top-3.5 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] z-10 pointer-events-none" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm0 2h14v2H5v-2z" />
+                                </svg>
+                            <% } %>
+                            <img src="<%= getAvatarSrc(m) %>" alt="<%= icName %>"
+                                class="avatar-ring w-20 h-20 rounded-full object-cover"
+                                onerror="this.onerror=null;this.src='<%= getFallback(m) %>';" />
                         </div>
-                        <% }); %>
-            </div>
 
-            <div id="pagination" class="pagination"></div>
+                        <h3 class="font-display text-lg text-white font-600">
+                            <%= icName %>
+                        </h3>
 
-            <p id="emptyState" class="hidden text-center text-white/30 py-16 font-display tracking-widest">NO MEMBERS
-                FOUND</p>
-            <% if (!safeMembers.length) { %>
-                <p class="text-center text-white/30 py-16 font-display tracking-widest">NO MEMBERS YET</p>
-                <% } %>
+                        <div class="flex items-center justify-center gap-2 mt-3">
+                            <span class="badge badge-<%= rank.toLowerCase() %>">
+                                <%= safeRankLabels[rank] || rank %>
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-center gap-1.5 mt-3">
+                            <span class="status-dot status-<%= status.toLowerCase() %>"></span>
+                            <span class="text-[11px] text-white/40 uppercase tracking-wider">
+                                <%= status %>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 min-h-[32px] flex items-center justify-center">
+                        <% if (m && m.facebookUrl) { %>
+                            <a href="<%= m.facebookUrl %>" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-4 h-4 text-white/70">
+                                    <path
+                                        d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+                                </svg>
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <div id="pagination" class="pagination"></div>
+
+        <p id="emptyState" class="hidden text-center text-white/30 py-16 font-display tracking-widest">NO MEMBERS FOUND</p>
+        <% if (!safeMembers.length) { %>
+            <p class="text-center text-white/30 py-16 font-display tracking-widest">NO MEMBERS YET</p>
+        <% } %>
     </main>
 
-    <%- include('partials/music-player', { backgroundMusicUrl: typeof backgroundMusicUrl !=='undefined' ?
-        backgroundMusicUrl : '' }) %>
+    <%- include('partials/music-player', { backgroundMusicUrl: typeof backgroundMusicUrl !== 'undefined' ? backgroundMusicUrl : '' }) %>
 
-        <script>
-            const PAGE_SIZE = 9;
-            const searchInput = document.getElementById('searchInput');
-            const grid = document.getElementById('memberGrid');
-            const cards = Array.from(grid.querySelectorAll('.member-card'));
-            const emptyState = document.getElementById('emptyState');
-            const pagination = document.getElementById('pagination');
-            let currentPage = 1;
+    <script>
+        const PAGE_SIZE = 9;
+        const searchInput = document.getElementById('searchInput');
+        const grid = document.getElementById('memberGrid');
+        const cards = Array.from(grid.querySelectorAll('.member-card'));
+        const emptyState = document.getElementById('emptyState');
+        const pagination = document.getElementById('pagination');
+        let currentPage = 1;
 
-            function render() {
-                const q = searchInput.value.trim().toLowerCase();
-                const filtered = cards.filter((c) => (c.dataset.name || '').includes(q));
-                const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        function render() {
+            const q = searchInput.value.trim().toLowerCase();
+            const filtered = cards.filter((c) => (c.dataset.name || '').includes(q));
+            const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+            
+            if (currentPage > totalPages) currentPage = totalPages;
 
-                if (currentPage > totalPages) currentPage = totalPages;
+            cards.forEach((c) => { c.style.display = 'none'; });
+            const start = (currentPage - 1) * PAGE_SIZE;
+            filtered.slice(start, start + PAGE_SIZE).forEach((c) => { c.style.display = ''; });
 
-                cards.forEach((c) => { c.style.display = 'none'; });
-                const start = (currentPage - 1) * PAGE_SIZE;
-                filtered.slice(start, start + PAGE_SIZE).forEach((c) => { c.style.display = ''; });
+            if (emptyState) emptyState.classList.toggle('hidden', filtered.length > 0);
+            renderPagination(totalPages);
+        }
 
-                if (emptyState) emptyState.classList.toggle('hidden', filtered.length > 0);
-                renderPagination(totalPages);
-            }
+        function renderPagination(totalPages) {
+            if (!pagination) return;
+            pagination.innerHTML = '';
+            if (totalPages <= 1) return;
 
-            function renderPagination(totalPages) {
-                if (!pagination) return;
-                pagination.innerHTML = '';
-                if (totalPages <= 1) return;
-
-                const makeBtn = (label, page, disabled, active) => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'page-btn' + (active ? ' active' : '');
-                    btn.textContent = label;
-                    btn.disabled = disabled;
-                    btn.addEventListener('click', () => {
-                        currentPage = page;
-                        render();
-                        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    });
-                    return btn;
-                };
-
-                pagination.appendChild(makeBtn('‹', currentPage - 1, currentPage === 1, false));
-                for (let p = 1; p <= totalPages; p++) {
-                    pagination.appendChild(makeBtn(String(p), p, false, p === currentPage));
-                }
-                pagination.appendChild(makeBtn('›', currentPage + 1, currentPage === totalPages, false));
-            }
-
-            if (searchInput) {
-                searchInput.addEventListener('input', () => {
-                    currentPage = 1;
+            const makeBtn = (label, page, disabled, active) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'page-btn' + (active ? ' active' : '');
+                btn.textContent = label;
+                btn.disabled = disabled;
+                btn.addEventListener('click', () => {
+                    currentPage = page;
                     render();
+                    grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
-            }
+                return btn;
+            };
 
-            render();
-        </script>
+            pagination.appendChild(makeBtn('‹', currentPage - 1, currentPage === 1, false));
+            for (let p = 1; p <= totalPages; p++) {
+                pagination.appendChild(makeBtn(String(p), p, false, p === currentPage));
+            }
+            pagination.appendChild(makeBtn('›', currentPage + 1, currentPage === totalPages, false));
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                currentPage = 1;
+                render();
+            });
+        }
+
+        render();
+    </script>
 </body>
 
 </html>
