@@ -122,22 +122,30 @@
           vMatte.currentTime = vColor.currentTime;
         }
 
-        // วาดภาพวิดีโอสีและภาพวิดีโอเงาลง Offscreen Canvas
-        offCtxColor.drawImage(vColor, 0, 0, w, h);
-        offCtxMatte.drawImage(vMatte, 0, 0, w, h);
+        try {
+          // วาดภาพวิดีโอสีและภาพวิดีโอเงาลง Offscreen Canvas
+          offCtxColor.drawImage(vColor, 0, 0, w, h);
+          offCtxMatte.drawImage(vMatte, 0, 0, w, h);
 
-        const imgDataColor = offCtxColor.getImageData(0, 0, w, h);
-        const imgDataMatte = offCtxMatte.getImageData(0, 0, w, h);
+          const imgDataColor = offCtxColor.getImageData(0, 0, w, h);
+          const imgDataMatte = offCtxMatte.getImageData(0, 0, w, h);
 
-        const dataColor = imgDataColor.data;
-        const dataMatte = imgDataMatte.data;
+          const dataColor = imgDataColor.data;
+          const dataMatte = imgDataMatte.data;
 
-        // นำค่าความสว่างจาก vMatte ไปใส่เป็น Alpha (ความโปร่งใส) ของ vColor
-        for (let i = 0; i < dataColor.length; i += 4) {
-          dataColor[i + 3] = dataMatte[i];
+          // นำค่าความสว่างจาก vMatte ไปใส่เป็น Alpha (ความโปร่งใส) ของ vColor
+          for (let i = 0; i < dataColor.length; i += 4) {
+            dataColor[i + 3] = dataMatte[i];
+          }
+
+          ctx.putImageData(imgDataColor, 0, 0);
+        } catch (e) {
+          // วิดีโอโหลดจากโดเมนอื่นที่ไม่ส่ง CORS header -> canvas ถูก tainted อ่าน pixel ไม่ได้
+          // fallback ไปโชว์โลโก้นิ่งแทนปล่อยให้ loop ค้างเงียบๆ
+          console.error('Luma-matte render failed (likely CORS-tainted canvas):', e);
+          handleError();
+          return;
         }
-
-        ctx.putImageData(imgDataColor, 0, 0);
       }
 
       requestAnimationFrame(drawFrame);

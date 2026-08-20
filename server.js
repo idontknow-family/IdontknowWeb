@@ -32,6 +32,10 @@ const pgPool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
+pgPool.on('error', (err) => {
+  console.error('Unexpected error on idle PG client (session store):', err);
+});
+
 app.use(
   session({
     store: new pgSession({

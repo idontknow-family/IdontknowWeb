@@ -65,7 +65,7 @@
         <input type="file" name="avatarFile" accept="image/*"
           class="w-full text-white/60 text-sm mt-1 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white file:text-xs" />
         <% if (member && member.avatarUrl) { %>
-          <img src="<%= member.avatarUrl %>" class="w-14 h-14 rounded-full mt-3 avatar-ring object-cover" alt="current avatar" />
+          <img src="<%= member.resolvedAvatarUrl || member.avatarUrl %>" class="w-14 h-14 rounded-full mt-3 avatar-ring object-cover" alt="current avatar" />
         <% } %>
       </div>
 
