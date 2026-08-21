@@ -11,46 +11,45 @@ const RANK_LABELS = {
   RECRUIT: 'Recruit',
 };
 
-const RANK_ORDER = {
-  LEADER: 1,
-  CO_LEADER: 2,
-  HIGH_COMMAND: 3,
-  OFFICIAL_MEMBER: 4,
-  RECRUIT: 5,
-};
-
-router.get('/', (req, res) => {
-  res.render('index', {
-    title: `${process.env.FAMILY_NAME || 'FAMILY'} | Home`,
-    familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
-    familySlogan: process.env.FAMILY_SLOGAN || 'Loyalty. Power. Legacy.',
-    familyLogoUrl: process.env.FAMILY_LOGO_URL || '',
-    familyLogoVideoColorUrl: process.env.FAMILY_LOGO_VIDEO_COLOR_URL || '/images/logo-color.mp4',
-    familyLogoVideoMatteUrl: process.env.FAMILY_LOGO_VIDEO_MATTE_URL || '/images/logo-matte.mp4',
-    backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
-    designCredit: process.env.DESIGN_CREDIT || '',
-    musicCredit: process.env.MUSIC_CREDIT || '',
-  });
+router.get('/', (req, res, next) => {
+  try {
+    res.render('index', {
+      title: `${process.env.FAMILY_NAME || 'FAMILY'} | Home`,
+      familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
+      familySlogan: process.env.FAMILY_SLOGAN || 'Loyalty. Power. Legacy.',
+      familyLogoUrl: process.env.FAMILY_LOGO_URL || '',
+      familyLogoVideoColorUrl: process.env.FAMILY_LOGO_VIDEO_COLOR_URL || '/images/logo-color.mp4',
+      familyLogoVideoMatteUrl: process.env.FAMILY_LOGO_VIDEO_MATTE_URL || '/images/logo-matte.mp4',
+      backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
+      designCredit: process.env.DESIGN_CREDIT || '',
+      musicCredit: process.env.MUSIC_CREDIT || '',
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.get('/roster', async (req, res, next) => {
   try {
     const members = await prisma.member.findMany({
-      orderBy: [{ icName: 'asc' }],
+      orderBy: [{ rank: 'asc' }, { icName: 'asc' }],
     });
 
-    const membersResolved = members
-      .map((m) => ({
-        ...m,
-        resolvedAvatarUrl: resolveAvatarUrl(m.avatarUrl),
-      }))
-      .sort((a, b) => (RANK_ORDER[a.rank] || 99) - (RANK_ORDER[b.rank] || 99) || a.icName.localeCompare(b.icName));
+    const membersResolved = members.map((m) => ({
+      ...m,
+      resolvedAvatarUrl: resolveAvatarUrl(m.avatarUrl),
+    }));
+
+    // แยก Leader ออกมาโชว์เด่นๆ ข้างบน ที่เหลือไปอยู่ใน grid ที่ paginate
+    const leaders = membersResolved.filter((m) => m.rank === 'LEADER');
+    const others = membersResolved.filter((m) => m.rank !== 'LEADER');
 
     res.render('roster', {
       title: `Member - ${process.env.FAMILY_NAME || 'FAMILY'}`,
       familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
       backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
-      members: membersResolved,
+      leaders,
+      others,
       rankLabels: RANK_LABELS,
     });
   } catch (err) {

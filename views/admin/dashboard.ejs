@@ -53,9 +53,9 @@
               <td class="px-5 py-3 text-right whitespace-nowrap">
                 <a href="/admin/members/<%= m.id %>/edit" class="text-gold/80 hover:text-gold text-xs font-medium mr-3">Edit</a>
                 <form method="POST" action="/admin/members/<%= m.id %>/delete" class="inline js-delete-form"
-  data-member-name="<%= m.icName %>">
-  <button type="submit" class="text-red-400/80 hover:text-red-400 text-xs font-medium">Delete</button>
-</form>
+                  data-member-name="<%= m.icName %>">
+                  <button type="submit" class="text-red-400/80 hover:text-red-400 text-xs font-medium">Delete</button>
+                </form>
               </td>
             </tr>
           <% }) %>
@@ -66,15 +66,17 @@
       </table>
     </div>
   </main>
+
   <script>
-  document.querySelectorAll('.js-delete-form').forEach((form) => {
-    form.addEventListener('submit', (e) => {
-      const name = form.dataset.memberName || 'this member';
-      if (!confirm('Remove ' + name + ' from the roster? This cannot be undone.')) {
-        e.preventDefault();
-      }
+    // ใช้ dataset แทนฝัง EJS ลง onsubmit ตรงๆ กันชื่อที่มี ' (เช่น O'Brien) ทำ JS พัง/หลุด context
+    document.querySelectorAll('.js-delete-form').forEach((form) => {
+      form.addEventListener('submit', (e) => {
+        const name = form.dataset.memberName || 'this member';
+        if (!confirm('Remove ' + name + ' from the roster? This cannot be undone.')) {
+          e.preventDefault();
+        }
+      });
     });
-  });
-</script>
+  </script>
 </body>
 </html>

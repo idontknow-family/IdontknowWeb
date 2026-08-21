@@ -10,7 +10,7 @@
   <main class="max-w-lg mx-auto px-6 py-8">
     <a href="/admin" class="text-white/30 text-xs hover:text-white/60">&larr; Back to dashboard</a>
     <h1 class="font-display text-2xl text-white font-700 tracking-wider uppercase mt-2 mb-6">
-      <%= member ? 'Edit Member' : 'Add New Member' %>
+      <%= member && member.id ? 'Edit Member' : 'Add New Member' %>
     </h1>
 
     <% if (error) { %>
@@ -19,7 +19,7 @@
 
     <form
       method="POST"
-      action="<%= member ? '/admin/members/' + member.id : '/admin/members' %>"
+      action="<%= member && member.id ? '/admin/members/' + member.id : '/admin/members' %>"
       enctype="multipart/form-data"
       class="glass-card rounded-2xl p-8 space-y-5"
     >
@@ -72,7 +72,7 @@
       <div class="flex gap-3 pt-2">
         <button type="submit"
           class="bg-gold/90 hover:bg-gold text-black font-display font-700 tracking-widest uppercase text-sm rounded-lg px-6 py-2.5 transition">
-          <%= member ? 'Save Changes' : 'Add Member' %>
+          <%= member && member.id ? 'Save Changes' : 'Add Member' %>
         </button>
         <a href="/admin" class="text-white/40 hover:text-white/70 text-sm px-6 py-2.5">Cancel</a>
       </div>

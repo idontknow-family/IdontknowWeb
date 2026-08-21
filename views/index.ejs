@@ -25,143 +25,140 @@
         <div class="relative w-full h-full flex items-center justify-center">
           <!-- Canvas สำหรับแสดงผลโลโก้โปร่งใส -->
           <canvas id="lumaCanvas" class="logo-video max-w-full max-h-full object-contain"></canvas>
-
+          
           <!-- ซ่อน Video Element ไว้ดึง Frame Data -->
-          <video id="vColor" src="<%= familyLogoVideoColorUrl %>" autoplay loop muted playsinline style="display:none;"
-            crossorigin="anonymous"></video>
-          <video id="vMatte" src="<%= familyLogoVideoMatteUrl %>" autoplay loop muted playsinline style="display:none;"
-            crossorigin="anonymous"></video>
+          <video id="vColor" src="<%= familyLogoVideoColorUrl %>" autoplay loop muted playsinline style="display:none;" crossorigin="anonymous"></video>
+          <video id="vMatte" src="<%= familyLogoVideoMatteUrl %>" autoplay loop muted playsinline style="display:none;" crossorigin="anonymous"></video>
 
           <% if (familyLogoUrl) { %>
             <div id="logoFallback" style="display:none;" class="w-full h-full items-center justify-center">
               <img src="<%= familyLogoUrl %>" alt="<%= familyName %> logo" class="logo-float" />
             </div>
-            <% } %>
+          <% } %>
         </div>
-        <% } else if (familyLogoUrl) { %>
-          <img src="<%= familyLogoUrl %>" alt="<%= familyName %> logo" class="logo-float" />
-          <% } else { %>
-            <span class="font-display text-white/15 text-6xl tracking-widest select-none">LOGO</span>
-            <% } %>
+      <% } else if (familyLogoUrl) { %>
+        <img src="<%= familyLogoUrl %>" alt="<%= familyName %> logo" class="logo-float" />
+      <% } else { %>
+        <span class="font-display text-white/15 text-6xl tracking-widest select-none">LOGO</span>
+      <% } %>
     </div>
 
-    <a href="/roster"
-      class="enter-btn font-display font-700 tracking-[0.2em] uppercase text-sm intro-fade intro-delay-3">
+    <a href="/roster" class="enter-btn font-display font-700 tracking-[0.2em] uppercase text-sm intro-fade intro-delay-3">
       <%= familyName %>
     </a>
 
     <p class="relative z-10 text-white/20 text-[11px] mt-16 text-center intro-fade intro-delay-4">
       &copy; <%= new Date().getFullYear() %>
-        <%= familyName.split(' ')[0] %>
+        <%= (familyName || '').split(' ')[0] %>
       <% if (designCredit) { %> &middot; Designed by <%= designCredit %><% } %>
       <% if (musicCredit) { %> &middot; Music credits by <%= musicCredit %><% } %>
     </p>
   </section>
 
-  <%- include('partials/music-player', { backgroundMusicUrl: typeof backgroundMusicUrl !== 'undefined' ? backgroundMusicUrl : '' }) %>
+  <%- include('partials/music-player', { backgroundMusicUrl: backgroundMusicUrl }) %>
 
-          <script>
-            // Snow Effect
-            (function () {
-              var container = document.getElementById('snowContainer');
-              if (!container) { return; }
-              var count = window.innerWidth < 640 ? 18 : 32;
-              for (var i = 0; i < count; i++) {
-                var flake = document.createElement('span');
-                flake.className = 'snow';
-                flake.textContent = '❋';
-                flake.style.left = Math.random() * 100 + 'vw';
-                flake.style.fontSize = (8 + Math.random() * 10) + 'px';
-                flake.style.animationDuration = (8 + Math.random() * 10) + 's';
-                flake.style.animationDelay = (Math.random() * 8) + 's';
-                container.appendChild(flake);
-              }
-            })();
+<script>
+  // Snow Effect
+  (function () {
+    var container = document.getElementById('snowContainer');
+    if (!container) { return; }
+    var count = window.innerWidth < 640 ? 18 : 32;
+    for (var i = 0; i < count; i++) {
+      var flake = document.createElement('span');
+      flake.className = 'snow';
+      flake.textContent = '❋';
+      flake.style.left = Math.random() * 100 + 'vw';
+      flake.style.fontSize = (8 + Math.random() * 10) + 'px';
+      flake.style.animationDuration = (8 + Math.random() * 10) + 's';
+      flake.style.animationDelay = (Math.random() * 8) + 's';
+      container.appendChild(flake);
+    }
+  })();
 
-            // Luma Matte Video Renderer
-            (function () {
-              const vColor = document.getElementById('vColor');
-              const vMatte = document.getElementById('vMatte');
-              const canvas = document.getElementById('lumaCanvas');
-              const fallback = document.getElementById('logoFallback');
+  // Luma Matte Video Renderer
+  (function () {
+    const vColor = document.getElementById('vColor');
+    const vMatte = document.getElementById('vMatte');
+    const canvas = document.getElementById('lumaCanvas');
+    const fallback = document.getElementById('logoFallback');
 
-              if (!vColor || !vMatte || !canvas) return;
+    if (!vColor || !vMatte || !canvas) return;
 
-              const ctx = canvas.getContext('2d');
-              const offCanvasColor = document.createElement('canvas');
-              const offCtxColor = offCanvasColor.getContext('2d', { willReadFrequently: true });
-              const offCanvasMatte = document.createElement('canvas');
-              const offCtxMatte = offCanvasMatte.getContext('2d', { willReadFrequently: true });
+    const ctx = canvas.getContext('2d');
+    const offCanvasColor = document.createElement('canvas');
+    const offCtxColor = offCanvasColor.getContext('2d', { willReadFrequently: true });
+    const offCanvasMatte = document.createElement('canvas');
+    const offCtxMatte = offCanvasMatte.getContext('2d', { willReadFrequently: true });
 
-              let isRendering = true;
+    let isRendering = true;
 
-              function handleError() {
-                isRendering = false;
-                canvas.style.display = 'none';
-                if (fallback) fallback.style.display = 'flex';
-              }
+    function handleError() {
+      isRendering = false;
+      canvas.style.display = 'none';
+      if (fallback) fallback.style.display = 'flex';
+    }
 
-              vColor.addEventListener('error', handleError);
-              vMatte.addEventListener('error', handleError);
+    vColor.addEventListener('error', handleError);
+    vMatte.addEventListener('error', handleError);
 
-              function drawFrame() {
-                if (!isRendering) return;
+    function drawFrame() {
+      if (!isRendering) return;
 
-                if (vColor.readyState >= 2 && vMatte.readyState >= 2) {
-                  const w = vColor.videoWidth || 500;
-                  const h = vColor.videoHeight || 500;
+      if (vColor.readyState >= 2 && vMatte.readyState >= 2) {
+        const w = vColor.videoWidth || 500;
+        const h = vColor.videoHeight || 500;
 
-                  if (canvas.width !== w || canvas.height !== h) {
-                    canvas.width = w;
-                    canvas.height = h;
-                    offCanvasColor.width = w;
-                    offCanvasColor.height = h;
-                    offCanvasMatte.width = w;
-                    offCanvasMatte.height = h;
-                  }
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+          offCanvasColor.width = w;
+          offCanvasColor.height = h;
+          offCanvasMatte.width = w;
+          offCanvasMatte.height = h;
+        }
 
-                  // คุมจังหวะให้วิดีโอทั้งสองเล่นตรงกันเสมอ
-                  if (Math.abs(vColor.currentTime - vMatte.currentTime) > 0.08) {
-                    vMatte.currentTime = vColor.currentTime;
-                  }
+        // คุมจังหวะให้วิดีโอทั้งสองเล่นตรงกันเสมอ
+        if (Math.abs(vColor.currentTime - vMatte.currentTime) > 0.08) {
+          vMatte.currentTime = vColor.currentTime;
+        }
 
-                  try {
-                    // วาดภาพวิดีโอสีและภาพวิดีโอเงาลง Offscreen Canvas
-                    offCtxColor.drawImage(vColor, 0, 0, w, h);
-                    offCtxMatte.drawImage(vMatte, 0, 0, w, h);
+        try {
+          // วาดภาพวิดีโอสีและภาพวิดีโอเงาลง Offscreen Canvas
+          offCtxColor.drawImage(vColor, 0, 0, w, h);
+          offCtxMatte.drawImage(vMatte, 0, 0, w, h);
 
-                    const imgDataColor = offCtxColor.getImageData(0, 0, w, h);
-                    const imgDataMatte = offCtxMatte.getImageData(0, 0, w, h);
+          const imgDataColor = offCtxColor.getImageData(0, 0, w, h);
+          const imgDataMatte = offCtxMatte.getImageData(0, 0, w, h);
 
-                    const dataColor = imgDataColor.data;
-                    const dataMatte = imgDataMatte.data;
+          const dataColor = imgDataColor.data;
+          const dataMatte = imgDataMatte.data;
 
-                    // นำค่าความสว่างจาก vMatte ไปใส่เป็น Alpha (ความโปร่งใส) ของ vColor
-                    for (let i = 0; i < dataColor.length; i += 4) {
-                      dataColor[i + 3] = dataMatte[i];
-                    }
+          // นำค่าความสว่างจาก vMatte ไปใส่เป็น Alpha (ความโปร่งใส) ของ vColor
+          for (let i = 0; i < dataColor.length; i += 4) {
+            dataColor[i + 3] = dataMatte[i];
+          }
 
-                    ctx.putImageData(imgDataColor, 0, 0);
-                  } catch (e) {
-                    // วิดีโอโหลดจากโดเมนอื่นที่ไม่ส่ง CORS header -> canvas ถูก tainted อ่าน pixel ไม่ได้
-                    // fallback ไปโชว์โลโก้นิ่งแทนปล่อยให้ loop ค้างเงียบๆ
-                    console.error('Luma-matte render failed (likely CORS-tainted canvas):', e);
-                    handleError();
-                    return;
-                  }
-                }
+          ctx.putImageData(imgDataColor, 0, 0);
+        } catch (e) {
+          // วิดีโอโหลดจากโดเมนอื่นที่ไม่ส่ง CORS header -> canvas ถูก tainted อ่าน pixel ไม่ได้
+          // fallback ไปโชว์โลโก้นิ่งแทนปล่อยให้ loop ค้างเงียบๆ
+          console.error('Luma-matte render failed (likely CORS-tainted canvas):', e);
+          handleError();
+          return;
+        }
+      }
 
-                requestAnimationFrame(drawFrame);
-              }
+      requestAnimationFrame(drawFrame);
+    }
 
-              Promise.all([
-                vColor.play().catch(() => { }),
-                vMatte.play().catch(() => { })
-              ]).then(() => {
-                requestAnimationFrame(drawFrame);
-              });
-            })();
-          </script>
+    Promise.all([
+      vColor.play().catch(() => {}),
+      vMatte.play().catch(() => {})
+    ]).then(() => {
+      requestAnimationFrame(drawFrame);
+    });
+  })();
+</script>
 </body>
 
 </html>

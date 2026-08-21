@@ -6,9 +6,7 @@
     <div class="flex items-center gap-4 text-xs">
       <a href="/" target="_blank" class="text-white/40 hover:text-white/70">View Roster ↗</a>
       <span class="text-white/20">|</span>
-      <span class="text-white/40">Logged in as <span class="text-white/70">
-          <%= adminUsername %>
-        </span></span>
+      <span class="text-white/40">Logged in as <span class="text-white/70"><%= adminUsername %></span></span>
       <form method="POST" action="/admin/logout" class="inline">
         <button type="submit" class="text-red-400/70 hover:text-red-400">Logout</button>
       </form>

@@ -9,6 +9,11 @@ const publicRoutes = require('./routes/public');
 const adminAuthRoutes = require('./routes/adminAuth');
 const adminRoutes = require('./routes/admin');
 
+// กัน server รันโดยใช้ secret แบบ hardcode ตอน production (ปลอมแปลง session ได้ถ้ารั่ว)
+if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET must be set in production. Refusing to start with an insecure default.');
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -32,6 +37,8 @@ const pgPool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
+// ป้องกัน process ล่มทั้งตัวเวลา idle connection หลุด (DB restart / network blip)
+// ถ้าไม่ดัก error event นี้ Node จะโยน error ขึ้นไปจนตาย process ทันที
 pgPool.on('error', (err) => {
   console.error('Unexpected error on idle PG client (session store):', err);
 });

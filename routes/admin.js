@@ -39,16 +39,20 @@ router.get('/', async (req, res, next) => {
 });
 
 // New member form
-router.get('/members/new', (req, res) => {
-  res.render('admin/member-form', {
-    title: 'Add New Member',
-    familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
-    adminUsername: req.session.adminUsername,
-    member: null,
-    RANKS,
-    STATUSES,
-    error: null,
-  });
+router.get('/members/new', (req, res, next) => {
+  try {
+    res.render('admin/member-form', {
+      title: 'Add New Member',
+      familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
+      adminUsername: req.session.adminUsername,
+      member: null,
+      RANKS,
+      STATUSES,
+      error: null,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // CREATE
