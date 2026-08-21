@@ -40,16 +40,11 @@ router.get('/roster', async (req, res, next) => {
       resolvedAvatarUrl: resolveAvatarUrl(m.avatarUrl),
     }));
 
-    // แยก Leader ออกมาโชว์เด่นๆ ข้างบน ที่เหลือไปอยู่ใน grid ที่ paginate
-    const leaders = membersResolved.filter((m) => m.rank === 'LEADER');
-    const others = membersResolved.filter((m) => m.rank !== 'LEADER');
-
     res.render('roster', {
       title: `Member - ${process.env.FAMILY_NAME || 'FAMILY'}`,
       familyName: process.env.FAMILY_NAME || 'HOUSE OF RAVEN',
       backgroundMusicUrl: process.env.BACKGROUND_MUSIC_URL || '',
-      leaders,
-      others,
+      members: membersResolved,
       rankLabels: RANK_LABELS,
     });
   } catch (err) {
